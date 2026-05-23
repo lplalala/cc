@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell($f = \"d:\\\\xwechat_files\\\\wxid_qfhs7szgq1g622_c500\\\\temp\\\\RWTemp\\\\2026-05\\\\b12c77ec3b3c72e68d0942a40264fa12\\\\0034143c227d4544851e987a5ff5f2fb.png\"; $img = [System.Drawing.Image]::FromFile\\($f\\); Write-Host \"Size: $\\($img.Width\\)x$\\($img.Height\\)\"; Write-Host \"Format: $\\($img.RawFormat\\)\"; $img.Dispose\\(\\))",
+      "WebSearch",
+      "PowerShell(Test-Path *)"
+    ]
+  }
+}
