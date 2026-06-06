@@ -1,0 +1,55 @@
+<!-- 商品表单页 -->
+<view class="form-container">
+  <view class="form-item">
+    <text class="label">商品名称 *</text>
+    <input class="input" value="{{name}}" bindinput="onInput" data-field="name" placeholder="如：洁牙套餐" />
+  </view>
+
+  <view class="form-item">
+    <text class="label">价格 *</text>
+    <input class="input" value="{{price}}" bindinput="onInput" data-field="price" type="digit" placeholder="如：299" />
+  </view>
+
+  <view class="form-item">
+    <text class="label">原价（选填）</text>
+    <input class="input" value="{{originalPrice}}" bindinput="onInput" data-field="originalPrice" type="digit" placeholder="划线价" />
+  </view>
+
+  <view class="form-item">
+    <text class="label">分类</text>
+    <picker mode="selector" range="{{categories}}" range-key="name" bindchange="onCategoryChange">
+      <view class="picker-view">{{category || '请选择分类'}}</view>
+    </picker>
+  </view>
+
+  <view class="form-item">
+    <text class="label">标签（逗号分隔）</text>
+    <input class="input" value="{{tags}}" bindinput="onInput" data-field="tags" placeholder="如：热门,新品" />
+  </view>
+
+  <view class="form-item">
+    <text class="label">库存</text>
+    <input class="input" value="{{stock}}" bindinput="onInput" data-field="stock" type="number" />
+  </view>
+
+  <view class="form-item">
+    <text class="label">上架状态</text>
+    <radio-group bindchange="onStatusChange">
+      <label class="radio-label"><radio value="on" checked="{{status === 'on'}}" /> 上架</label>
+      <label class="radio-label"><radio value="off" checked="{{status === 'off'}}" /> 下架</label>
+    </radio-group>
+  </view>
+
+  <view class="form-item">
+    <text class="label">描述</text>
+    <textarea class="textarea" value="{{description}}" bindinput="onInput" data-field="description" placeholder="服务内容、适用人群等" />
+  </view>
+
+  <view class="form-item">
+    <text class="label">商品图片</text>
+    <image wx:if="{{imageUrl}}" src="{{imageUrl}}" mode="aspectFill" class="preview-img" bindtap="chooseImage" />
+    <button wx:else class="img-btn" bindtap="chooseImage">选择图片</button>
+  </view>
+
+  <button class="save-btn" bindtap="save">保存</button>
+</view>

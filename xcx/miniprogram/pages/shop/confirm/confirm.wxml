@@ -1,0 +1,41 @@
+<!-- 下单确认页 -->
+<view class="container">
+  <!-- 商品信息 -->
+  <view class="product-summary card" wx:if="{{product}}">
+    <image src="{{product.imageUrl || '/images/default-goods-image.png'}}" mode="aspectFill" class="thumb" />
+    <view class="summary-info">
+      <text class="name">{{product.name}}</text>
+      <text class="unit-price">单价：¥{{product.price}}</text>
+      <text class="qty">数量：{{quantity}}</text>
+    </view>
+  </view>
+
+  <!-- 手机号 -->
+  <view class="form-card card">
+    <text class="label">手机号</text>
+    <input class="input" value="{{phone}}" bindinput="onPhoneInput" placeholder="请输入手机号" type="number" />
+  </view>
+
+  <!-- 备注 -->
+  <view class="form-card card">
+    <text class="label">备注（选填）</text>
+    <textarea class="textarea" value="{{remark}}" bindinput="onRemarkInput" placeholder="如有特殊需求请备注" />
+  </view>
+
+  <!-- 金额汇总 -->
+  <view class="amount-card card">
+    <view class="row">
+      <text>商品金额</text>
+      <text>¥{{totalAmount}}</text>
+    </view>
+    <view class="row total">
+      <text>实付金额</text>
+      <text class="total-num">¥{{totalAmount}}</text>
+    </view>
+  </view>
+
+  <!-- 支付按钮 -->
+  <button class="pay-btn btn-primary" bindtap="confirmPay" disabled="{{!product}}">
+    确认支付 ¥{{totalAmount}}
+  </button>
+</view>

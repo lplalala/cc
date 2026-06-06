@@ -1,0 +1,22 @@
+/* ======== 支付成功页 ======== */
+.container { padding: 80rpx 40rpx 40rpx; text-align: center; }
+.success-icon { font-size: 100rpx; margin-bottom: 20rpx; }
+.success-title { font-size: 40rpx; font-weight: 700; display: block; margin-bottom: 8rpx; }
+.success-desc { font-size: 26rpx; color: #888; display: block; margin-bottom: 40rpx; }
+
+.code-box {
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 40rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.06);
+  margin-bottom: 40rpx;
+}
+.code-label { font-size: 26rpx; color: #888; display: block; margin-bottom: 12rpx; }
+.code-value { font-size: 56rpx; font-weight: 700; color: #1A8CFF; letter-spacing: 8rpx; display: block; }
+.code-bar { height: 1rpx; background: #EEE; margin: 20rpx 0; }
+.code-hint { font-size: 24rpx; color: #999; }
+
+.btn-group { display: flex; flex-direction: column; gap: 16rpx; }
+.copy-btn { background: #FF7F32; color: white; border-radius: 16rpx; }
+.order-btn { background: #1A8CFF; color: white; border-radius: 16rpx; }
+.shop-btn { background: #F0F0F0; color: #666; border-radius: 16rpx; }

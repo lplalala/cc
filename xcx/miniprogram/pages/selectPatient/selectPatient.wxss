@@ -1,0 +1,12 @@
+.container { padding: 40rpx; }
+.title { font-size: 36rpx; margin-bottom: 40rpx; }
+.patient-card {
+  background: white;
+  padding: 30rpx;
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+  font-size: 30rpx;
+  border: 1rpx solid #eee;
+}
+.empty { text-align: center; color: #999; margin-top: 100rpx; }
+

@@ -1,0 +1,57 @@
+<view class="chart-container">
+  <!-- 上排牙 -->
+  <view class="teeth-row">
+    <view class="teeth-group">
+      <block wx:for="{{upperLeft}}" wx:key="id">
+        <view 
+          class="tooth {{item.selected ? 'selected' : ''}} {{!showAll && !item.selected ? 'hidden' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="onTap"
+        >
+          <text>{{item.num}}</text>
+        </view>
+      </block>
+    </view>
+    <view class="v-line"></view>
+    <view class="teeth-group">
+      <block wx:for="{{upperRight}}" wx:key="id">
+        <view 
+          class="tooth {{item.selected ? 'selected' : ''}} {{!showAll && !item.selected ? 'hidden' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="onTap"
+        >
+          <text>{{item.num}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <view class="h-line"></view>
+
+  <!-- 下排牙 -->
+  <view class="teeth-row">
+    <view class="teeth-group">
+      <block wx:for="{{lowerLeft}}" wx:key="id">
+        <view 
+          class="tooth {{item.selected ? 'selected' : ''}} {{!showAll && !item.selected ? 'hidden' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="onTap"
+        >
+          <text>{{item.num}}</text>
+        </view>
+      </block>
+    </view>
+    <view class="v-line"></view>
+    <view class="teeth-group">
+      <block wx:for="{{lowerRight}}" wx:key="id">
+        <view 
+          class="tooth {{item.selected ? 'selected' : ''}} {{!showAll && !item.selected ? 'hidden' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="onTap"
+        >
+          <text>{{item.num}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,27 @@
+<!-- 新增就诊人 -->
+<view class="form">
+  <view class="form-item">
+    <text class="label">姓名</text>
+    <input class="input-field" value="{{name}}" bindinput="inputName" placeholder="请输入就诊人姓名" />
+  </view>
+  <view class="form-item">
+    <text class="label">年龄</text>
+    <input class="input-field" value="{{age}}" bindinput="inputAge" type="number" placeholder="请输入年龄（1-120）" />
+  </view>
+  <view class="form-item">
+    <text class="label">手机号</text>
+    <input class="input-field" value="{{phone}}" bindinput="inputPhone" type="number" maxlength="11" placeholder="请输入11位手机号" />
+  </view>
+  <view class="form-item">
+    <text class="label">性别</text>
+    <radio-group bindchange="radioChange">
+      <label class="radio-label">
+        <radio value="男" checked="{{gender === '男'}}" /> 男
+      </label>
+      <label class="radio-label">
+        <radio value="女" checked="{{gender === '女'}}" /> 女
+      </label>
+    </radio-group>
+  </view>
+  <button class="save-btn" bindtap="save">保存并返回</button>
+</view>

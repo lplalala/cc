@@ -1,0 +1,160 @@
+<!-- pages/index/index.wxml -->
+<!-- 首页：轮播图、导航、医生团队 -->
+
+<swiper indicator-dots autoplay interval="3000" duration="500" circular>
+  <block wx:for="{{banners}}" wx:key="_id">
+    <swiper-item>
+      <image src="{{item.imageUrl}}" mode="aspectFill" class="slide-image" lazy-load="true"></image>
+    </swiper-item>
+  </block>
+</swiper>
+
+<view class="nav-area">
+  <block wx:for="{{navItems}}" wx:key="index">
+    <view class="nav-item" bindtap="onNavTap" data-id="{{item.id}}">
+      <text class="nav-icon" wx:if="{{item.icon}}">{{item.icon}}</text>
+      <text class="nav-text">{{item.name}}</text>
+    </view>
+  </block>
+</view>
+
+<!-- 医生团队 -->
+<view class="section-title">医生团队</view>
+<view class="doctor-list">
+  <block wx:for="{{doctors}}" wx:key="_id">
+    <view class="doctor-card" bindtap="onDoctorTap" data-doctor="{{item}}">
+      <image src="{{item.avatarUrl}}" class="doctor-avatar" mode="aspectFill" lazy-load="true"></image>
+      <view class="doctor-info">
+        <view class="doctor-name-row">
+          <text class="doctor-name">{{item.name}}</text>
+          <text class="doctor-title-tag">{{item.title}}</text>
+        </view>
+        <view class="doctor-stars">
+          <text class="star" wx:for="{{[1,2,3,4,5]}}" wx:key="*this">
+            {{item.rating >= item ? '⭐' : '☆'}}
+          </text>
+          <text class="rating-text" wx:if="{{item.rating}}">{{item.rating}}.0</text>
+        </view>
+        <text class="doctor-desc">{{item.description}}</text>
+        <view class="doctor-tags" wx:if="{{item.specialties && item.specialties.length}}">
+          <text class="tag" wx:for="{{item.specialties}}" wx:key="*this" wx:for-item="s">{{s}}</text>
+        </view>
+      </view>
+      <text class="card-arrow">›</text>
+    </view>
+  </block>
+</view>
+
+<button wx:if="{{isAdmin}}" class="admin-entry" bindtap="goAdmin">后台管理</button>
+
+<!-- ============ 医生展开预约 Overlay ============ -->
+<view class="overlay-mask" wx:if="{{showOverlay}}" bindtap="closeOverlay"></view>
+<view class="overlay-panel {{showOverlay ? 'show' : ''}}" catchtap="stopBubble">
+  <!-- 关闭按钮 -->
+  <view class="overlay-close" bindtap="closeOverlay">✕</view>
+
+  <!-- 上部 1/3：医生信息 -->
+  <view class="overlay-doctor" wx:if="{{currentDoctor}}">
+    <image src="{{currentDoctor.avatarUrl}}" class="od-avatar" mode="aspectFill"></image>
+    <view class="od-info">
+      <view class="od-name-row">
+        <text class="od-name">{{currentDoctor.name}}</text>
+        <text class="od-title">{{currentDoctor.title}}</text>
+      </view>
+      <view class="od-stars">
+        <text class="star" wx:for="{{[1,2,3,4,5]}}" wx:key="*this">
+          {{currentDoctor.rating >= item ? '⭐' : '☆'}}
+        </text>
+        <text class="rating-text" wx:if="{{currentDoctor.rating}}">{{currentDoctor.rating}}.0</text>
+      </view>
+      <text class="od-desc">{{currentDoctor.description}}</text>
+      <view class="od-tags" wx:if="{{currentDoctor.specialties && currentDoctor.specialties.length}}">
+        <text class="od-tag" wx:for="{{currentDoctor.specialties}}" wx:key="*this" wx:for-item="s">{{s}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分隔线 -->
+  <view class="overlay-divider"></view>
+
+  <!-- 下部 2/3：日期 + 两列时间段 -->
+  <scroll-view scroll-y class="overlay-booking" enhanced show-scrollbar="{{false}}">
+    <!-- 就诊人 -->
+    <view class="ob-patient">
+      <text class="ob-label">就诊人</text>
+      <scroll-view scroll-x class="patient-scroll">
+        <view class="patient-chip {{selectedPatientId === item._id ? 'active' : ''}}"
+              wx:for="{{patients}}" wx:key="_id"
+              bindtap="selectPatient" data-id="{{item._id}}">
+          <text>{{item.name}}</text>
+        </view>
+        <view class="patient-chip add-new" bindtap="addPatientInOverlay">
+          <text>＋ 新建</text>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 日期选择 -->
+    <view class="ob-section">
+      <text class="ob-label">选择日期</text>
+      <view class="cal-row">
+        <view class="cal-item {{item.dateStr === selectedDate ? 'active' : ''}} {{item.isToday ? 'today' : ''}} {{item.isPast ? 'past' : ''}}"
+              wx:for="{{weekDates}}" wx:key="dateStr"
+              bindtap="selectDate" data-date="{{item.dateStr}}">
+          <text class="cal-weekday">{{item.weekday}}</text>
+          <text class="cal-day">{{item.day}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 两列时段 -->
+    <view class="ob-section">
+      <text class="ob-label">选择时段</text>
+      <view class="time-two-col">
+        <!-- 左列：上午 -->
+        <view class="time-col">
+          <text class="time-col-title">上午</text>
+          <view class="time-slot {{selectedTime === item.time ? 'active' : ''}} {{item.remain === 0 ? 'full' : ''}} {{item.isPast ? 'past' : ''}}"
+                wx:for="{{morningSlots}}" wx:key="time"
+                bindtap="selectTime" data-time="{{item.time}}">
+            <text class="slot-time">{{item.time}}</text>
+            <text class="slot-remain" wx:if="{{item.remain > 0}}">余{{item.remain}}</text>
+            <text class="slot-full" wx:else>满</text>
+          </view>
+        </view>
+        <!-- 右列：下午 -->
+        <view class="time-col">
+          <text class="time-col-title">下午</text>
+          <view class="time-slot {{selectedTime === item.time ? 'active' : ''}} {{item.remain === 0 ? 'full' : ''}} {{item.isPast ? 'past' : ''}}"
+                wx:for="{{afternoonSlots}}" wx:key="time"
+                bindtap="selectTime" data-time="{{item.time}}">
+            <text class="slot-time">{{item.time}}</text>
+            <text class="slot-remain" wx:if="{{item.remain > 0}}">余{{item.remain}}</text>
+            <text class="slot-full" wx:else>满</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 独立晚上区块 -->
+      <view class="evening-block">
+        <text class="evening-title">晚上</text>
+        <view class="evening-slots">
+          <view class="time-slot evening-slot {{selectedTime === item.time ? 'active' : ''}} {{item.remain === 0 ? 'full' : ''}} {{item.isPast ? 'past' : ''}}"
+                wx:for="{{eveningSlots}}" wx:key="time"
+                bindtap="selectTime" data-time="{{item.time}}">
+            <text class="slot-time">{{item.time}}</text>
+            <text class="slot-remain" wx:if="{{item.remain > 0}}">余{{item.remain}}</text>
+            <text class="slot-full" wx:else>满</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 确认按钮 -->
+    <button class="overlay-confirm" bindtap="confirmBooking"
+            disabled="{{!selectedTime}}">
+      确认挂号 {{selectedTime ? '· ' + selectedTime : ''}}
+    </button>
+    <view style="height: 40rpx;"></view>
+  </scroll-view>
+</view>

@@ -1,0 +1,15 @@
+<view class="container">
+  <!-- 正在查询中 -->
+  <view wx:if="{{loading}}" class="status-box">
+    <view class="loading-spinner"></view>
+    <text class="status-text">正在查询您的质保卡...</text>
+  </view>
+
+  <!-- 没有手机号，显示登录引导 -->
+  <view wx:elif="{{!phone}}" class="login-box">
+    <view class="login-icon">🔒</view>
+    <text class="login-title">您还没授权手机号</text>
+    <text class="login-desc">授权后即可自动查询质保卡</text>
+    <button class="login-btn" bindtap="goAuth">立即授权</button>
+  </view>
+</view>

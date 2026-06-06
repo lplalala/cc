@@ -1,0 +1,10 @@
+<view class="container">
+
+  <text class="title">选择就诊人</text>
+  <block wx:for="{{patients}}" wx:key="name">
+    <view class="patient-card" bindtap="selectPatient" data-name="{{item.name}}">
+      <text>{{item.name}}</text>
+    </view>
+  </block>
+  <view wx:if="{{patients.length === 0}}" class="empty">该号码下暂无就诊人</view>
+</view>

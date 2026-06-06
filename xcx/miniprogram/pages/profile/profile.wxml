@@ -1,0 +1,80 @@
+<view class="profile-container">
+  <!-- 用户信息卡片 -->
+<!-- 已登录：显示用户信息 -->
+<view class="user-card" wx:if="{{phone}}">
+  <image class="avatar" src="/images/default-avatar.jpg" mode="aspectFill"></image>
+  <view class="user-info">
+    <input class="nick-name" type="nickname" placeholder="点击设置昵称" value="{{nickName}}" bindblur="onNickNameBlur" />
+    <view class="phone-id-row">
+      <text class="user-phone">{{phone}}</text>
+      <view class="id-copy-box">
+        <text class="user-id">ID: {{openid}}</text>
+        <text class="copy-btn" bindtap="copyId">复制</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 未登录：显示登录引导 -->
+<view class="user-card login-card" wx:else>
+  <view class="login-hint-box">
+    <text class="login-hint-icon">🔒</text>
+    <text class="login-hint-text">请登录以使用完整功能</text>
+    <button class="login-btn" bindtap="goLogin">去授权</button>
+  </view>
+</view>
+
+  <!-- 菜单区域（保持不变） -->
+  <view class="menu-group">
+    <view class="menu-item" bindtap="toggleBookings">
+      <text>📋 我的预约</text>
+      <text class="arrow">{{showBookings ? '▼' : '➤'}}</text>
+    </view>
+    <view wx:if="{{showBookings}}">
+      <view wx:for="{{bookings || []}}" wx:key="_id" class="booking-card">
+        <view class="booking-row-1">
+          <text class="booking-doctor">{{item.doctorName || '未指定医生'}}{{item.doctorTitle ? ' · ' + item.doctorTitle : ''}}</text>
+          <text class="booking-time">{{item.date}} {{item.time}}</text>
+        </view>
+        <view class="booking-row-2">
+          <text class="booking-patient">{{item.patientName || '未知'}}</text>
+          <text class="booking-status {{item.status === '已预约' ? 'status-pending' : item.status === '已就诊' ? 'status-done' : 'status-cancel'}}">{{item.status || '已预约'}}</text>
+        </view>
+        <view class="booking-actions">
+          <text class="del-link" bindtap="deleteBooking" data-id="{{item._id}}">删除</text>
+        </view>
+      </view>
+      <view wx:if="{{bookings.length===0}}" class="empty">暂无预约记录</view>
+    </view>
+
+    <view class="menu-item" bindtap="togglePatients">
+      <text>👨‍👩‍👧‍👦 就诊人管理</text>
+      <text class="arrow">{{showPatients ? '▼' : '➤'}}</text>
+    </view>
+    <view wx:if="{{showPatients}}">
+      <view wx:for="{{patients || []}}" wx:key="_id" class="sub-item">
+        <view class="sub-info">
+          <text>{{item.name}} - {{item.phone}}</text>
+          <text class="status">{{item.gender}} {{item.age}}岁</text>
+        </view>
+        <view class="sub-actions">
+          <button size="mini" type="warn" bindtap="deletePatient" data-id="{{item._id}}">删除</button>
+        </view>
+      </view>
+      <view wx:if="{{patients.length===0}}" class="empty">暂无就诊人</view>
+    </view>
+
+    <view class="menu-item" bindtap="goMyOrders">
+      <text>📦 我的订单</text>
+      <text class="arrow">➤</text>
+    </view>
+
+    <view class="menu-item" bindtap="goAddress">
+      <text>📍 门诊地址</text>
+      <text class="arrow">➤</text>
+    </view>
+  </view>
+
+  <button wx:if="{{isAdmin}}" class="admin-btn" bindtap="goAdmin">后台管理</button>
+  <button class="logout-btn" bindtap="logout">退出登录</button>
+</view>

@@ -1,0 +1,84 @@
+<!-- 电子质保卡 — 京东礼品卡风格 -->
+<view class="container">
+  <block wx:for="{{cards}}" wx:key="_id">
+    <view class="warranty-card {{item.isExpired ? 'expired' : ''}}" bindtap="openNotes" data-item="{{item}}">
+
+      <!-- 顶部 -->
+      <view class="card-top">
+        <view class="card-clinic">同进仁华口腔</view>
+        <view class="card-title-row">
+          <text class="card-title">电子质保卡</text>
+          <text class="card-subtitle">WARRANTY CARD</text>
+        </view>
+        <view class="status-stamp {{item.isExpired ? 'expired-stamp' : 'active-stamp'}}">
+          <text>{{item.isExpired ? '已过期' : '有效中'}}</text>
+        </view>
+      </view>
+
+      <!-- 信息区 + 右侧牙位图 -->
+      <view class="card-body">
+        <view class="patient-row">
+          <text class="patient-label">持卡人</text>
+          <text class="patient-name">{{item.patientName}}</text>
+        </view>
+
+        <view class="info-row">
+          <text class="info-label">质保项目</text>
+          <text class="info-value">{{item.item}}</text>
+        </view>
+
+        <view wx:if="{{item.brand}}" class="info-row">
+          <text class="info-label">品牌</text>
+          <text class="info-value">{{item.brand}}</text>
+        </view>
+
+        <!-- 牙位图：贴在信息区右侧，垂直居中 -->
+        <view wx:if="{{item.toothPosition}}" class="tooth-float">
+          <tooth-chart toothPosition="{{item.toothPosition}}" showAll="{{false}}" />
+        </view>
+      </view>
+
+      <!-- 分项质保 -->
+      <view wx:if="{{item._items && item._items.length > 0}}" class="items-section">
+        <view class="divider"></view>
+        <view class="items-title">质保明细</view>
+        <view class="warranty-item" wx:for="{{item._items}}" wx:key="index" wx:for-item="sub">
+          <view class="item-header">
+            <text class="item-icon">{{sub.isLifetime ? '♾️' : (sub.expired ? '⛔' : '✅')}}</text>
+            <text class="item-name">{{sub.name}}</text>
+            <view wx:if="{{sub.isLifetime}}" class="lifetime-badge">终身质保</view>
+            <view wx:elif="{{sub.expired}}" class="expired-badge">已过期</view>
+            <view wx:else class="active-badge">有效中</view>
+          </view>
+          <view class="item-dates">
+            <text>{{sub.startDate}} 至 {{sub.displayEnd}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 普通项目日期 -->
+      <view wx:elif="{{!item._items}}" class="date-row">
+        <view class="divider"></view>
+        <text class="date-label">有效期</text>
+        <text class="date-value">{{item.startDate}} 至 {{item.endDate || '终身'}}</text>
+      </view>
+
+      <!-- 底部装饰条 -->
+      <view class="card-bottom">
+        <view class="bottom-line"></view>
+        <text class="bottom-text">TOJIN RENHUA DENTAL · 尊享质保服务</text>
+      </view>
+
+      <!-- 过期遮罩 -->
+      <view wx:if="{{item.isExpired}}" class="expired-overlay">
+        <text class="expired-text">已过期</text>
+      </view>
+    </view>
+  </block>
+
+  <view wx:if="{{cards.length === 0}}" class="empty">暂无质保卡</view>
+
+  <view class="back-home-box">
+    <button class="back-home-btn" bindtap="goHome">返回首页</button>
+  </view>
+</view>

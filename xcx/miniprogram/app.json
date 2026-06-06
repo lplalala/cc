@@ -1,0 +1,56 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/shop/index/index",
+    "pages/shop/confirm/confirm",
+    "pages/shop/orderSuccess/orderSuccess",
+    "pages/shop/orders/orders",
+    "pages/shop/orderDetail/orderDetail",
+    "pages/admin/productForm/productForm",
+    "pages/auth/auth",
+    "pages/query/query",
+    "pages/selectPatient/selectPatient",
+    "pages/warrantyCard/warrantyCard",
+    "pages/admin/admin",
+    "pages/warrantyForm/warrantyForm",
+    "pages/booking/booking",
+    "pages/createPatient/createPatient",
+    "pages/profile/profile",
+    "pages/editPatient/editPatient",
+    "pages/editAppointment/editAppointment",
+    "pages/notice/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "同进仁华口腔",
+    "navigationBarBackgroundColor": "#1A8CFF",
+    "navigationBarTextStyle": "white"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#1A8CFF",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/home.png",
+        "selectedIconPath": "images/home-active.png"
+      },
+      {
+        "pagePath": "pages/shop/index/index",
+        "text": "商城",
+        "iconPath": "images/icons/goods.png",
+        "selectedIconPath": "images/icons/goods-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "images/mine.png",
+        "selectedIconPath": "images/mine-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

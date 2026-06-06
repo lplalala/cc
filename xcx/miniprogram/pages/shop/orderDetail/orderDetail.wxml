@@ -1,0 +1,55 @@
+<!-- 订单详情页 -->
+<view class="container" wx:if="{{order}}">
+  <!-- 状态横幅 -->
+  <view class="status-banner {{order.status}}">
+    <text class="status-text">
+      {{order.status === 'paid' ? '待核销' : (order.status === 'verified' ? '已核销' : '已退款')}}
+    </text>
+  </view>
+
+  <!-- 商品列表 -->
+  <view class="card">
+    <text class="section-title">商品信息</text>
+    <view class="prod-item" wx:for="{{order.items}}" wx:key="productId" wx:for-item="prod">
+      <image src="{{prod.imageUrl || '/images/default-goods-image.png'}}" mode="aspectFill" class="thumb" />
+      <view class="info">
+        <text class="name">{{prod.productName}}</text>
+        <text class="meta">×{{prod.quantity}}  ¥{{prod.price}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 核销码（待核销状态显示） -->
+  <view class="card code-section" wx:if="{{order.status === 'paid'}}">
+    <text class="section-title">核销信息</text>
+    <view class="code-display">
+      <text class="code">{{order.verify_code}}</text>
+      <text class="code-tip">请到店出示给工作人员核销</text>
+    </view>
+    <button class="copy-btn" bindtap="copyCode">复制核销码</button>
+  </view>
+
+  <!-- 核销信息（已核销/已退款） -->
+  <view class="card" wx:elif="{{order.status === 'verified'}}">
+    <text class="section-title">核销记录</text>
+    <text class="info-text">核销时间：{{order.verifyTime}}</text>
+  </view>
+  <view class="card" wx:elif="{{order.status === 'refunded'}}">
+    <text class="section-title">退款记录</text>
+    <text class="info-text">退款时间：{{order.refundTime}}</text>
+    <text class="info-text" wx:if="{{order.refundReason}}">退款原因：{{order.refundReason}}</text>
+  </view>
+
+  <!-- 订单信息 -->
+  <view class="card">
+    <text class="section-title">订单信息</text>
+    <view class="info-row"><text class="label">订单编号</text><text class="value">{{order.orderNo}}</text></view>
+    <view class="info-row"><text class="label">下单时间</text><text class="value">{{order.createdAt}}</text></view>
+    <view class="info-row"><text class="label">支付金额</text><text class="value price">¥{{order.totalAmount}}</text></view>
+  </view>
+
+  <!-- 退款按钮 -->
+  <button wx:if="{{order.status === 'paid'}}" class="refund-btn" bindtap="requestRefund">申请退款</button>
+</view>
+
+<view wx:else class="empty">加载中...</view>

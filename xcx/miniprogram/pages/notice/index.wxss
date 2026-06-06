@@ -1,0 +1,105 @@
+/* ======== 注意事项 — 四宫格展示 ======== */
+
+.container { padding: 24rpx; min-height: 100vh; background: #F5F7FA; }
+
+/* 加载 & 空态 */
+.loading-wrap, .empty-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 200rpx;
+}
+.loading-text { font-size: 28rpx; color: #999; }
+.empty-icon { font-size: 80rpx; margin-bottom: 20rpx; }
+.empty-text { font-size: 28rpx; color: #999; }
+
+/* ======== 四宫格 ======== */
+.notice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+  padding: 4rpx 0;
+}
+
+.notice-card {
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.06);
+  transition: transform 0.15s;
+}
+.notice-card:active { transform: scale(0.97); }
+
+.notice-image {
+  width: 100%;
+  height: 260rpx;
+  background: #E8F4FD;
+  display: block;
+}
+
+.notice-text-area {
+  padding: 16rpx 20rpx 20rpx;
+}
+
+.notice-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #1A1A1A;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ======== 详情弹窗 ======== */
+.detail-mask {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 2000;
+}
+.detail-panel {
+  position: fixed; bottom: 0; left: 0; right: 0; top: 80rpx;
+  background: #FFFFFF;
+  border-radius: 32rpx 32rpx 0 0;
+  z-index: 2001;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+.detail-panel.show { transform: translateY(0); }
+
+.detail-close {
+  position: absolute; top: 20rpx; right: 20rpx; z-index: 10;
+  width: 52rpx; height: 52rpx; line-height: 52rpx;
+  text-align: center; background: rgba(0,0,0,0.2);
+  color: #FFF; border-radius: 50%; font-size: 28rpx;
+}
+
+.detail-body {
+  flex: 1;
+  padding: 40rpx 30rpx;
+  overflow-y: auto;
+}
+
+.detail-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #1A1A1A;
+  display: block;
+  margin-bottom: 30rpx;
+}
+
+.detail-image {
+  width: 100%;
+  border-radius: 12rpx;
+  margin-bottom: 20rpx;
+  display: block;
+}
+
+.detail-empty {
+  text-align: center;
+  color: #999;
+  font-size: 28rpx;
+  padding-top: 80rpx;
+}

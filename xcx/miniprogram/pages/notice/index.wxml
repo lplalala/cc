@@ -1,0 +1,49 @@
+<!-- pages/notice/index.wxml -->
+<!-- 注意事项四宫格展示页，数据来源：projectTemplates 集合 -->
+
+<view class="container">
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="loading-wrap">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 空态 -->
+  <view wx:elif="{{templates.length === 0}}" class="empty-wrap">
+    <text class="empty-icon">📋</text>
+    <text class="empty-text">暂无注意事项</text>
+  </view>
+
+  <!-- 四宫格列表 -->
+  <view wx:else class="notice-grid">
+    <view class="notice-card"
+          wx:for="{{templates}}" wx:key="_id"
+          bindtap="onNoticeTap" data-item="{{item}}">
+      <image src="{{item.coverImage}}"
+             mode="aspectFill"
+             class="notice-image"
+             lazy-load="true"></image>
+      <view class="notice-text-area">
+        <text class="notice-title">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- ============ 详情弹窗 ============ -->
+<view class="detail-mask" wx:if="{{showDetail}}" bindtap="closeDetail"></view>
+<view class="detail-panel {{showDetail ? 'show' : ''}}" catchtap="stopBubble">
+  <view class="detail-close" bindtap="closeDetail">✕</view>
+  <scroll-view scroll-y class="detail-body">
+    <text class="detail-title">{{currentTemplate.name}}</text>
+    <!-- 展示所有 noteImages -->
+    <block wx:if="{{currentTemplate.imageUrls && currentTemplate.imageUrls.length > 0}}">
+      <image wx:for="{{currentTemplate.imageUrls}}" wx:key="*this"
+             src="{{item}}" mode="widthFix"
+             class="detail-image"
+             bindtap="previewImages" data-url="{{item}}"></image>
+    </block>
+    <view wx:else class="detail-empty">
+      <text>暂无图片</text>
+    </view>
+  </scroll-view>
+</view>

@@ -1,0 +1,37 @@
+<view class="auth-container">
+  <view class="auth-box">
+    <text class="auth-title">欢迎来到同进仁华口腔</text>
+    <text class="auth-desc">授权手机号并填写昵称后进入</text>
+
+    <!-- 第一步：手机号授权按钮 -->
+    <view wx:if="{{!phone}}">
+      <button 
+        class="auth-btn" 
+        open-type="getPhoneNumber" 
+        bindgetphonenumber="getRealPhoneNumber"
+      >
+        点击授权手机号
+      </button>
+    </view>
+
+    <!-- 第二步：手机号已获取，显示昵称输入区域（始终显示，直到手动确认） -->
+    <view wx:if="{{phone}}">
+      <view class="phone-show">
+        <text>已授权手机号：{{phone}}</text>
+      </view>
+      <view class="nickname-box">
+        <text class="label">请输入或选择微信昵称</text>
+        <input 
+          class="nickname-input" 
+          type="nickname" 
+          placeholder="点击选择微信昵称" 
+          value="{{nickName}}" 
+          bindinput="onNickNameInput"
+          bindblur="onNickNameBlur"
+          focus="{{true}}"
+        />
+        <button class="nickname-confirm-btn" bindtap="confirmNickName">确认昵称</button>
+      </view>
+    </view>
+  </view>
+</view>

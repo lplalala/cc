@@ -1,0 +1,71 @@
+/* ========================================
+   全局设计 Token — 宝矿力 POCARI SWEAT 风格
+   ======================================== */
+
+page {
+  --primary: #1A8CFF;
+  --primary-dark: #0D6ED6;
+  --accent: #FF7F32;
+  --bg: #F5F7FA;
+  --card-bg: #FFFFFF;
+  --card-radius: 16rpx;
+  --card-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+  --text-primary: #1A1A1A;
+  --text-secondary: #666666;
+  --text-tertiary: #999999;
+
+  background-color: var(--bg);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Noto Sans SC", "Helvetica Neue", sans-serif;
+  color: var(--text-primary);
+  font-size: 28rpx;
+  line-height: 1.5;
+}
+
+/* 通用卡片样式 */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+}
+
+/* 通用主按钮 */
+.btn-primary {
+  background: var(--primary);
+  color: #FFFFFF;
+  border-radius: var(--card-radius);
+  border: none;
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.btn-primary:active {
+  background: var(--primary-dark);
+  transform: scale(0.98);
+}
+
+/* 通用强调按钮 */
+.btn-accent {
+  background: var(--accent);
+  color: #FFFFFF;
+  border-radius: var(--card-radius);
+  border: none;
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+/* 通用区块标题 */
+.section-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--text-primary);
+  padding: 20rpx 32rpx 0;
+}
+
+/* 分割线 */
+.divider {
+  height: 1rpx;
+  background: #EEEEEE;
+  margin: 16rpx 0;
+}

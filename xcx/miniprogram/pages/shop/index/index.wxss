@@ -1,0 +1,136 @@
+/* ======== 商城首页 — 宝矿力清新风格 ======== */
+page { background: #F5F7FA; }
+
+/* 分类导航 */
+.category-bar {
+  white-space: nowrap;
+  padding: 20rpx 30rpx;
+  background: #FFFFFF;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04);
+}
+.category-item {
+  display: inline-block;
+  padding: 12rpx 28rpx;
+  margin-right: 16rpx;
+  border-radius: 32rpx;
+  font-size: 26rpx;
+  color: #666;
+  background: #F0F4F8;
+  transition: all 0.2s;
+}
+.category-item.active {
+  background: #1A8CFF;
+  color: #FFFFFF;
+}
+
+/* 商品网格 */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+  padding: 20rpx 30rpx;
+}
+
+.product-card {
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.04);
+  transition: transform 0.2s;
+}
+.product-card:active { transform: scale(0.98); }
+
+.product-img {
+  width: 100%;
+  height: 340rpx;
+  background: #E8F4FD;
+}
+
+.product-info { padding: 16rpx 20rpx 20rpx; }
+
+.product-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1A1A1A;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  line-height: 1.4;
+  margin-bottom: 8rpx;
+}
+
+.product-price-row { display: flex; align-items: baseline; gap: 8rpx; margin-bottom: 6rpx; }
+.product-price { font-size: 34rpx; font-weight: 700; color: #FF7F32; }
+.product-original { font-size: 22rpx; color: #999; text-decoration: line-through; }
+
+.tag-row { display: flex; gap: 8rpx; flex-wrap: wrap; }
+.tag {
+  font-size: 20rpx;
+  color: #FF7F32;
+  background: #FFF3EB;
+  padding: 2rpx 10rpx;
+  border-radius: 4rpx;
+}
+
+/* 加载状态 */
+.loading-more, .no-more { text-align: center; color: #999; padding: 30rpx; font-size: 24rpx; }
+.empty-shop { text-align: center; padding: 120rpx 0; color: #999; }
+
+/* ======== 商品详情弹窗 ======== */
+.detail-mask {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4); z-index: 100;
+}
+
+.detail-popup {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: #FFFFFF;
+  border-radius: 32rpx 32rpx 0 0;
+  z-index: 101;
+  max-height: 80vh;
+  overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.detail-popup.show { transform: translateY(0); }
+
+.detail-close {
+  position: absolute; top: 20rpx; right: 20rpx;
+  width: 48rpx; height: 48rpx;
+  line-height: 48rpx; text-align: center;
+  background: rgba(0,0,0,0.3); color: #FFFFFF;
+  border-radius: 50%; font-size: 28rpx; z-index: 10;
+}
+
+.detail-img { width: 100%; height: 400rpx; background: #E8F4FD; }
+
+.detail-body { padding: 30rpx; }
+.detail-name { font-size: 34rpx; font-weight: 700; display: block; margin-bottom: 12rpx; }
+.detail-price { font-size: 40rpx; font-weight: 700; color: #FF7F32; display: block; margin-bottom: 16rpx; }
+.detail-desc { font-size: 26rpx; color: #666; display: block; margin-bottom: 12rpx; line-height: 1.6; }
+.detail-notes { font-size: 24rpx; color: #999; display: block; margin-bottom: 12rpx; }
+
+.qty-row { display: flex; justify-content: space-between; align-items: center; padding: 20rpx 0; border-top: 1rpx solid #EEE; }
+.qty-label { font-size: 28rpx; }
+.qty-ctrl { display: flex; align-items: center; gap: 20rpx; }
+.qty-btn {
+  width: 48rpx; height: 48rpx; line-height: 48rpx;
+  text-align: center; font-size: 32rpx;
+  border-radius: 50%; background: #F0F4F8; color: #1A8CFF;
+}
+.qty-num { font-size: 32rpx; font-weight: 600; min-width: 40rpx; text-align: center; }
+
+.total-row { display: flex; justify-content: space-between; align-items: center; padding: 20rpx 0; }
+.total-label { font-size: 28rpx; }
+.total-price { font-size: 36rpx; font-weight: 700; color: #FF7F32; }
+
+.buy-btn {
+  margin: 0 30rpx 30rpx;
+  background: #1A8CFF;
+  color: white;
+  border-radius: 16rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+}

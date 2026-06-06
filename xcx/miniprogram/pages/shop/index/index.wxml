@@ -1,0 +1,71 @@
+<!--pages/shop/index/index.wxml-->
+<!-- 商城首页：分类导航 + 商品网格 -->
+
+<!-- 分类横滑导航 -->
+<scroll-view class="category-bar" scroll-x enable-flex>
+  <view class="category-item {{activeCategory === item.id ? 'active' : ''}}"
+    wx:for="{{categories}}" wx:key="id"
+    data-category="{{item.id}}"
+    bindtap="onCategoryTap">
+    <text>{{item.name}}</text>
+  </view>
+</scroll-view>
+
+<!-- 商品网格 -->
+<view class="product-grid">
+  <block wx:for="{{products}}" wx:key="_id">
+    <view class="product-card" bindtap="onProductTap" data-product="{{item}}">
+      <image src="{{item.imageUrl || '/images/default-goods-image.png'}}"
+             mode="aspectFill" class="product-img" />
+      <view class="product-info">
+        <text class="product-name">{{item.name}}</text>
+        <view class="product-price-row">
+          <text class="product-price">¥{{item.price}}</text>
+          <text wx:if="{{item.originalPrice}}" class="product-original">¥{{item.originalPrice}}</text>
+        </view>
+        <view wx:if="{{item.tags && item.tags.length}}" class="tag-row">
+          <text class="tag" wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag">{{tag}}</text>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>
+
+<!-- 加载状态 -->
+<view wx:if="{{loading}}" class="loading-more">加载中...</view>
+<view wx:elif="{{!hasMore && products.length > 0}}" class="no-more">— 已显示全部商品 —</view>
+<view wx:if="{{!loading && products.length === 0}}" class="empty-shop">
+  <text>暂无商品</text>
+</view>
+
+<!-- ========== 商品详情弹窗 ========== -->
+<view class="detail-mask" wx:if="{{showDetail}}" bindtap="closeDetail"></view>
+<view class="detail-popup {{showDetail ? 'show' : ''}}">
+  <view class="detail-close" bindtap="closeDetail">✕</view>
+  <image src="{{currentProduct.imageUrl || '/images/default-goods-image.png'}}"
+         mode="aspectFill" class="detail-img" />
+  <view class="detail-body">
+    <text class="detail-name">{{currentProduct.name}}</text>
+    <text class="detail-price">¥{{currentProduct.price}}</text>
+    <text wx:if="{{currentProduct.description}}" class="detail-desc">{{currentProduct.description}}</text>
+    <text wx:if="{{currentProduct.detail}}" class="detail-notes">{{currentProduct.detail}}</text>
+
+    <!-- 数量选择 -->
+    <view class="qty-row">
+      <text class="qty-label">数量</text>
+      <view class="qty-ctrl">
+        <view class="qty-btn" data-type="minus" bindtap="onQuantityChange">−</view>
+        <text class="qty-num">{{buyQuantity}}</text>
+        <view class="qty-btn" data-type="plus" bindtap="onQuantityChange">+</view>
+      </view>
+    </view>
+
+    <!-- 合计 -->
+    <view class="total-row">
+      <text class="total-label">合计</text>
+      <text class="total-price">¥{{totalPrice}}</text>
+    </view>
+  </view>
+
+  <button class="buy-btn" bindtap="goBuy">立即下单</button>
+</view>

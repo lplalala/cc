@@ -1,0 +1,37 @@
+<!-- 订单列表页 -->
+<view class="container">
+  <!-- Tab 切换 -->
+  <view class="tab-bar">
+    <view class="tab-item {{activeTab === 'paid' ? 'active' : ''}}" data-tab="paid" bindtap="switchTab">待核销</view>
+    <view class="tab-item {{activeTab === 'verified' ? 'active' : ''}}" data-tab="verified" bindtap="switchTab">已核销</view>
+    <view class="tab-item {{activeTab === 'refunded' ? 'active' : ''}}" data-tab="refunded" bindtap="switchTab">已退款</view>
+  </view>
+
+  <!-- 订单卡片 -->
+  <block wx:for="{{orders}}" wx:key="_id">
+    <view class="order-card card" bindtap="goDetail" data-id="{{item._id}}">
+      <view class="order-header">
+        <text class="order-no">订单号：{{item.orderNo}}</text>
+        <text class="order-status {{item.status}}">
+          {{item.status === 'paid' ? '待核销' : (item.status === 'verified' ? '已核销' : '已退款')}}
+        </text>
+      </view>
+      <block wx:for="{{item.items}}" wx:key="productId" wx:for-item="prod">
+        <view class="order-prod">
+          <image src="{{prod.imageUrl || '/images/default-goods-image.png'}}" mode="aspectFill" class="prod-thumb" />
+          <view class="prod-info">
+            <text class="prod-name">{{prod.productName}}</text>
+            <text class="prod-meta">×{{prod.quantity}}  ¥{{prod.price}}</text>
+          </view>
+        </view>
+      </block>
+      <view class="order-footer">
+        <text class="order-time">{{item.createdAt}}</text>
+        <text class="order-total">合计：¥{{item.totalAmount}}</text>
+      </view>
+    </view>
+  </block>
+
+  <view wx:if="{{!loading && orders.length === 0}}" class="empty">暂无订单</view>
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+</view>

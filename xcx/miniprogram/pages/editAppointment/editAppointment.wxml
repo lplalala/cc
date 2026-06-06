@@ -1,0 +1,19 @@
+<view class="form">
+  <view class="form-item">
+    <text class="label">就诊人</text>
+    <input value="{{patientName}}" disabled /> <!-- 不可修改就诊人 -->
+  </view>
+  <view class="form-item">
+    <text class="label">日期</text>
+    <picker mode="date" value="{{date}}" bindchange="onDateChange">
+      <view class="picker">{{date || '请选择日期'}}</view>
+    </picker>
+  </view>
+  <view class="form-item">
+    <text class="label">时段</text>
+    <picker mode="selector" range="{{timeSlots}}" value="{{timeIndex}}" bindchange="onTimeChange">
+      <view class="picker">{{selectedTime || '请选择时段'}}</view>
+    </picker>
+  </view>
+  <button class="save-btn" bindtap="save">保存修改</button>
+</view>

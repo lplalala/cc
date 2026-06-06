@@ -1,0 +1,258 @@
+/* ======== 轮播图 ======== */
+swiper { height: 360rpx; }
+.slide-image { width: 100%; height: 100%; }
+
+/* ======== 四宫格导航 ======== */
+.nav-area {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+  padding: 20rpx 30rpx;
+  margin: 0 15rpx 10rpx;
+}
+
+.nav-item {
+  width: 100%;
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 32rpx 10rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.06);
+  border: none;
+  line-height: 1.2;
+  font-size: 28rpx;
+  color: #333;
+  transition: all 0.2s;
+  box-sizing: border-box;
+  word-break: keep-all;
+  white-space: nowrap;
+}
+.nav-item:active {
+  background: #fafafa; transform: scale(0.97);
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.06);
+}
+.nav-icon { font-size: 44rpx; margin-bottom: 6rpx; line-height: 1; }
+.nav-text {
+  font-size: 28rpx; font-weight: 500; color: #333;
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* ======== 医生列表 ======== */
+.section-title { padding: 24rpx 32rpx 16rpx; font-weight: 700; font-size: 34rpx; color: #1A1A1A; }
+.doctor-list { padding: 0 30rpx 20rpx; }
+
+.doctor-card {
+  display: flex;
+  background: #FFFFFF;
+  margin-bottom: 20rpx;
+  border-radius: 16rpx;
+  padding: 28rpx 24rpx;
+  align-items: flex-start;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.06);
+  transition: transform 0.15s;
+}
+.doctor-card:active { transform: scale(0.98); }
+
+.doctor-avatar {
+  width: 100rpx; height: 100rpx;
+  border-radius: 16rpx;
+  background: #E8F4FD;
+  flex-shrink: 0;
+  margin-top: 2rpx;
+}
+.doctor-info { margin-left: 20rpx; flex: 1; min-width: 0; }
+
+/* 第一行：姓名 + 职称 */
+.doctor-name-row { display: flex; align-items: center; gap: 12rpx; margin-bottom: 0; }
+.doctor-name { font-size: 34rpx; font-weight: 700; color: #1A1A1A; }
+.doctor-title-tag {
+  font-size: 22rpx; color: #1A8CFF; background: #EDF6FF;
+  padding: 4rpx 14rpx; border-radius: 8rpx;
+  white-space: nowrap;
+}
+
+/* 第二行：星级 */
+.doctor-stars { display: flex; align-items: center; gap: 2rpx; margin-top: 0; margin-bottom: 6rpx; }
+.star { font-size: 24rpx; }
+.rating-text { font-size: 24rpx; color: #FF7F32; font-weight: 600; margin-left: 6rpx; }
+
+/* 第三行：简介（强制2行截断） */
+.doctor-desc {
+  font-size: 26rpx; color: #666; line-height: 1.6;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+  overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 10rpx;
+}
+.doctor-tags { display: flex; gap: 8rpx; flex-wrap: wrap; }
+.doctor-tags .tag {
+  font-size: 20rpx; color: #666; background: #F5F7FA;
+  padding: 4rpx 12rpx; border-radius: 4rpx;
+}
+
+.card-arrow { font-size: 40rpx; color: #CCC; margin-left: 12rpx; flex-shrink: 0; margin-top: 4rpx; }
+
+.admin-entry { margin: 40rpx; background: #1A8CFF; color: white; border-radius: 16rpx; }
+
+/* ================================================================
+   医生展开预约 Overlay（全屏覆盖层）
+   ================================================================ */
+.overlay-mask {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4); z-index: 1000;
+}
+.overlay-panel {
+  position: fixed; bottom: 0; left: 0; right: 0; top: 60rpx;
+  background: #F5F7FA;
+  border-radius: 32rpx 32rpx 0 0;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+.overlay-panel.show { transform: translateY(0); }
+
+.overlay-close {
+  position: absolute; top: 20rpx; right: 20rpx; z-index: 10;
+  width: 52rpx; height: 52rpx; line-height: 52rpx;
+  text-align: center; background: rgba(0,0,0,0.2);
+  color: #FFF; border-radius: 50%; font-size: 28rpx;
+}
+
+/* 上部：医生信息 */
+.overlay-doctor {
+  display: flex;
+  padding: 40rpx 30rpx 24rpx;
+  background: #FFFFFF;
+  flex-shrink: 0;
+}
+.od-avatar {
+  width: 140rpx; height: 140rpx;
+  border-radius: 20rpx; background: #E8F4FD;
+  flex-shrink: 0;
+}
+.od-info { margin-left: 24rpx; flex: 1; min-width: 0; }
+.od-name-row { display: flex; align-items: center; gap: 12rpx; margin-bottom: 0; }
+.od-name { font-size: 36rpx; font-weight: 700; }
+.od-title {
+  font-size: 22rpx; color: #1A8CFF; background: #EDF6FF;
+  padding: 4rpx 14rpx; border-radius: 8rpx;
+}
+.od-stars { display: flex; align-items: center; gap: 2rpx; margin-top: 0; margin-bottom: 6rpx; }
+.od-desc { font-size: 26rpx; color: #666; line-height: 1.6; margin-bottom: 10rpx; }
+.od-tags { display: flex; gap: 10rpx; flex-wrap: wrap; }
+.od-tag {
+  font-size: 22rpx; color: #FF7F32; background: #FFF3EB;
+  padding: 4rpx 14rpx; border-radius: 6rpx;
+}
+
+.overlay-divider { height: 16rpx; background: #F5F7FA; flex-shrink: 0; }
+
+/* 下部：预约区域 */
+.overlay-booking { flex: 1; padding: 32rpx 24rpx; overflow-y: auto; }
+
+.ob-label { font-size: 28rpx; font-weight: 700; color: #1A1A1A; display: block; margin-bottom: 14rpx; }
+.ob-section { margin-top: 24rpx; }
+.ob-section:first-of-type { margin-top: 0; }
+
+/* 就诊人 */
+.ob-patient { margin-bottom: 6rpx; }
+.patient-scroll { white-space: nowrap; padding: 4rpx 0; }
+.patient-chip {
+  display: inline-block;
+  padding: 12rpx 24rpx;
+  margin-right: 14rpx;
+  border-radius: 12rpx;
+  background: #FFFFFF;
+  font-size: 26rpx;
+  color: #666;
+  border: 2rpx solid #EEE;
+}
+.patient-chip.active { border-color: #1A8CFF; color: #1A8CFF; background: #EDF6FF; }
+.patient-chip.add-new { border-style: dashed; color: #1A8CFF; border-color: #1A8CFF; background: transparent; }
+
+/* 日历行 */
+.cal-row {
+  display: flex;
+  gap: 6rpx;
+  padding: 4rpx;
+  overflow: visible;
+}
+.cal-item {
+  flex: 1;
+  min-width: 0;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center;
+  padding: 14rpx 2rpx;
+  background: #FFFFFF;
+  border-radius: 12rpx;
+  border: 2rpx solid transparent;
+  transition: all 0.15s;
+}
+.cal-item.active { background: #1A8CFF; border-color: #1A8CFF; }
+.cal-item.active text { color: #FFFFFF; }
+.cal-item.today { border-color: #FF7F32; }
+.cal-item.past { opacity: 0.35; pointer-events: none; }
+.cal-weekday { font-size: 20rpx; color: #999; white-space: nowrap; }
+.cal-day { font-size: 28rpx; font-weight: 700; color: #1A1A1A; white-space: nowrap; }
+
+/* 两列时段 */
+.time-two-col { display: flex; gap: 20rpx; }
+.time-col { flex: 1; }
+.time-col-title {
+  font-size: 24rpx; color: #999; margin-bottom: 10rpx;
+  display: block; text-align: center;
+}
+
+.time-slot {
+  display: flex; align-items: center; justify-content: space-between;
+  background: #FFFFFF;
+  padding: 20rpx 16rpx;
+  margin-bottom: 10rpx;
+  border-radius: 12rpx;
+  border: 2rpx solid #EEE;
+  transition: all 0.15s;
+  min-width: 0;
+}
+.time-slot.active { border-color: #1A8CFF; background: #EDF6FF; }
+.time-slot.full { opacity: 0.35; pointer-events: none; }
+.time-slot.past { opacity: 0.35; pointer-events: none; }
+
+.slot-time { font-size: 26rpx; color: #1A1A1A; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.slot-remain { font-size: 22rpx; color: #1A8CFF; font-weight: 600; flex-shrink: 0; white-space: nowrap; margin-left: 8rpx; }
+.slot-full { font-size: 22rpx; color: #F44336; flex-shrink: 0; white-space: nowrap; margin-left: 8rpx; }
+
+/* ======== 晚上独立区块 ======== */
+.evening-block {
+  margin-top: 30rpx;
+}
+.evening-title {
+  font-size: 24rpx; color: #999;
+  display: block; text-align: center;
+  margin-bottom: 10rpx;
+}
+.evening-slots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10rpx;
+}
+.evening-slot {
+  width: calc(50% - 5rpx);
+  margin-bottom: 0;
+}
+
+/* 确认按钮 */
+.overlay-confirm {
+  margin-top: 30rpx;
+  background: #1A8CFF;
+  color: white;
+  border-radius: 16rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  width: 100%;
+}
+.overlay-confirm[disabled] { background: #CCC; }

@@ -1,0 +1,5 @@
+{
+  "usingComponents": {
+    "tooth-chart": "/components/tooth-chart/tooth-chart"
+  }
+}

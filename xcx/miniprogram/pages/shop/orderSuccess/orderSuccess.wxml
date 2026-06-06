@@ -1,0 +1,20 @@
+<!-- 支付成功页 -->
+<view class="container">
+  <view class="success-icon">✅</view>
+  <text class="success-title">支付成功</text>
+  <text class="success-desc">请向工作人员出示核销码</text>
+
+  <!-- 核销码（纯文本展示，可用canvas生成QR） -->
+  <view class="code-box">
+    <text class="code-label">核销码</text>
+    <text class="code-value">{{verificationCode}}</text>
+    <view class="code-bar" />
+    <text class="code-hint">请到店出示给工作人员核销</text>
+  </view>
+
+  <view class="btn-group">
+    <button class="copy-btn" bindtap="copyCode">复制核销码</button>
+    <button class="order-btn" bindtap="goOrder">查看订单</button>
+    <button class="shop-btn" bindtap="goShop">返回商城</button>
+  </view>
+</view>

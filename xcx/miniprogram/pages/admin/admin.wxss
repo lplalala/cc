@@ -1,0 +1,95 @@
+/* ======== 后台管理 — 宝矿力清新风格 ======== */
+.admin-container { padding: 20rpx; }
+
+.tab-bar {
+  display: flex;
+  margin-bottom: 30rpx;
+  flex-wrap: wrap;
+  gap: 10rpx;
+}
+.tab-bar text {
+  text-align: center;
+  padding: 18rpx 16rpx;
+  background: #EEEEEE;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  white-space: nowrap;
+}
+.tab-bar text.active { background: #1A8CFF; color: white; }
+
+.panel { margin-top: 10rpx; }
+
+.list-item {
+  background: white;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-bottom: 16rpx;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.04);
+}
+.thumb {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 8rpx;
+  background: #F0F0F0;
+  margin-right: 16rpx;
+}
+.item-url {
+  flex: 1;
+  font-size: 22rpx;
+  color: #666;
+  word-break: break-all;
+  margin-right: 10rpx;
+}
+.info-line { flex: 1; margin-right: 10rpx; }
+.sub { color: #666; font-size: 24rpx; }
+
+button { margin: 5rpx !important; }
+
+.search-bar { margin-bottom: 20rpx; }
+.search-bar input {
+  border: 1rpx solid #DDD;
+  padding: 12rpx;
+  border-radius: 8rpx;
+  background: white;
+}
+
+.sub-tabs { display: flex; gap: 10rpx; margin-bottom: 20rpx; }
+.sub-tabs text {
+  padding: 12rpx 24rpx; border-radius: 8rpx; font-size: 24rpx; background: #F0F0F0; color: #666;
+}
+.sub-tabs text.active { background: #1A8CFF; color: white; }
+
+.empty { text-align: center; color: #999; padding: 40rpx; }
+
+/* 日期选择器 */
+.date-picker-row {
+  display: flex;
+  align-items: center;
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 20rpx 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.04);
+}
+.picker-label { font-size: 28rpx; font-weight: 600; color: #1A1A1A; margin-right: 16rpx; }
+.date-display {
+  font-size: 28rpx;
+  color: #1A8CFF;
+  padding: 10rpx 24rpx;
+  background: #EDF6FF;
+  border-radius: 8rpx;
+}
+
+/* Admin 按钮风格 */
+.admin-container button {
+  background: #1A8CFF;
+  color: white;
+  border-radius: 8rpx;
+}
+.admin-container button[size="mini"] {
+  background: #F0F0F0;
+  color: #333;
+}

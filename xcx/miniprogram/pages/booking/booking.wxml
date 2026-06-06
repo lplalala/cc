@@ -1,0 +1,58 @@
+<!-- 自助挂号 — 日历式预约 -->
+<view class="container">
+  <text class="title">自助挂号</text>
+
+  <!-- 就诊人选择 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">选择就诊人</text>
+      <button class="add-btn" bindtap="goAddPatient">+ 新建</button>
+    </view>
+    <scroll-view scroll-x class="patient-scroll" wx:if="{{patients.length > 0}}">
+      <block wx:for="{{patients}}" wx:key="_id">
+        <view class="patient-chip {{selectedPatientId === item._id ? 'active' : ''}}"
+              bindtap="selectPatient" data-id="{{item._id}}">
+          <text class="chip-name">{{item.name}}</text>
+          <text class="chip-phone">{{item.phone}}</text>
+        </view>
+      </block>
+    </scroll-view>
+    <view wx:if="{{patients.length === 0}}" class="empty">暂无就诊人，请先新建</view>
+  </view>
+
+  <!-- 日历式日期选择 -->
+  <view class="section">
+    <text class="section-title">选择日期</text>
+    <view class="calendar-week">
+      <view class="cal-item {{item.dateStr === selectedDate ? 'active' : ''}} {{item.isToday ? 'today' : ''}} {{item.isPast ? 'past' : ''}}"
+            wx:for="{{weekDates}}" wx:key="dateStr"
+            bindtap="selectDate" data-date="{{item.dateStr}}">
+        <text class="cal-weekday">{{item.weekday}}</text>
+        <text class="cal-day">{{item.day}}</text>
+        <text class="cal-month">{{item.month}}月</text>
+        <view wx:if="{{item.isToday}}" class="today-dot"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 时段选择（含余量） -->
+  <view class="section">
+    <text class="section-title">选择时段</text>
+    <view class="time-grid">
+      <block wx:for="{{timeSlots}}" wx:key="time">
+        <view class="time-card {{selectedTime === item.time ? 'active' : ''}} {{item.remain === 0 ? 'full' : ''}} {{item.isPast ? 'past' : ''}}"
+              bindtap="selectTime" data-time="{{item.time}}">
+          <text class="time-text">{{item.time}}</text>
+          <text class="time-remain" wx:if="{{item.remain > 0}}">余{{item.remain}}位</text>
+          <text class="time-full" wx:else>已满</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 预约按钮 -->
+  <button class="confirm-btn btn-primary" bindtap="makeAppointment"
+          disabled="{{!selectedPatientId || !selectedDate || !selectedTime}}">
+    确认挂号
+  </button>
+</view>

@@ -1,0 +1,70 @@
+<view class="form-container">
+  <view class="form-item">
+    <text class="label">患者手机号</text>
+    <input class="input" value="{{form.queryNo}}" bindinput="onInput" data-field="queryNo" placeholder="请输入手机号" />
+  </view>
+  <view class="form-item">
+    <text class="label">患者姓名</text>
+    <input class="input" value="{{form.patientName}}" bindinput="onInput" data-field="patientName" placeholder="姓名" />
+  </view>
+
+  <view class="form-item">
+    <text class="label">品牌（选填）</text>
+    <input class="input" value="{{form.brand}}" bindinput="onInput" data-field="brand" placeholder="如：Nobel Biocare" />
+  </view>
+
+  <view class="form-item">
+    <text class="label">质保项目</text>
+    <picker mode="selector" range="{{projectNames}}" bindchange="onProjectChange" value="{{selectedProjectIndex}}">
+      <view class="picker-view">{{selectedProjectName || '请选择项目'}}</view>
+    </picker>
+  </view>
+
+  <!-- 普通项目日期范围 -->
+  <view wx:if="{{showDateRange}}" class="form-item">
+    <text class="label">质保日期</text>
+    <view class="date-row">
+      <input class="date-input" value="{{form.startDate}}" bindinput="onInput" data-field="startDate" placeholder="开始日期" />
+      <text class="date-sep">至</text>
+      <input class="date-input" value="{{form.endDate}}" bindinput="onInput" data-field="endDate" placeholder="结束日期" />
+    </view>
+  </view>
+
+  <!-- 种植牙等子项目（安全加护：数组为空时不渲染） -->
+  <view wx:if="{{showSubItems && selectedSubItems && selectedSubItems.length > 0}}" class="sub-section">
+    <text class="label">各分项质保时间</text>
+    <!-- 用 || [] 防止意外空值 -->
+    <block wx:for="{{selectedSubItems || []}}" wx:key="index">
+      <view class="sub-item">
+        <text class="sub-name">{{item.name}}</text>
+        <view class="sub-dates-row">
+          <input 
+            class="sub-date-input" 
+            value="{{item.startDate}}" 
+            bindinput="onSubItemInput" 
+            data-index="{{index}}" 
+            data-field="startDate" 
+            placeholder="开始日期"
+          />
+          <text class="date-sep">至</text>
+          <input 
+            class="sub-date-input" 
+            value="{{item.endDate}}" 
+            bindinput="onSubItemInput" 
+            data-index="{{index}}" 
+            data-field="endDate" 
+            placeholder="结束日期 / 终身"
+          />
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 牙位选择（确保传入空字符串而非 null） -->
+  <view class="form-item">
+    <text class="label">牙位选择</text>
+    <tooth-chart toothPosition="{{selectedTeethStr || ''}}" interactive="{{true}}" bind:tapTooth="onTapTooth" />
+  </view>
+
+  <button class="save-btn" bindtap="save">保存</button>
+</view>

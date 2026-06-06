@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "tooth-chart": "/components/tooth-chart/tooth-chart"
+  },
+  "navigationBarTitleText": "质保卡表单"
+}

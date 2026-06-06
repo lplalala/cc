@@ -1,0 +1,35 @@
+/* ======== 订单详情页 ======== */
+.container { padding: 20rpx 30rpx; }
+
+.status-banner { padding: 30rpx; border-radius: 16rpx; text-align: center; margin-bottom: 20rpx; }
+.status-banner.paid { background: #FFF3EB; }
+.status-banner.verified { background: #E8F4FD; }
+.status-banner.refunded { background: #F0F0F0; }
+.status-text { font-size: 32rpx; font-weight: 700; }
+.status-banner.paid .status-text { color: #FF7F32; }
+.status-banner.verified .status-text { color: #1A8CFF; }
+.status-banner.refunded .status-text { color: #999; }
+
+.section-title { font-size: 28rpx; font-weight: 600; display: block; margin-bottom: 16rpx; }
+
+.prod-item { display: flex; align-items: center; gap: 16rpx; padding: 12rpx 0; border-bottom: 1rpx solid #F5F5F5; }
+.prod-item:last-child { border-bottom: none; }
+.thumb { width: 80rpx; height: 80rpx; border-radius: 8rpx; background: #E8F4FD; flex-shrink: 0; }
+.info { flex: 1; }
+.name { font-size: 28rpx; display: block; margin-bottom: 4rpx; }
+.meta { font-size: 24rpx; color: #888; }
+
+.code-section { text-align: center; }
+.code-display { padding: 30rpx 0; }
+.code { font-size: 48rpx; font-weight: 700; color: #1A8CFF; letter-spacing: 6rpx; display: block; margin-bottom: 12rpx; }
+.code-tip { font-size: 24rpx; color: #999; }
+.copy-btn { background: #1A8CFF; color: white; border-radius: 8rpx; font-size: 26rpx; }
+
+.info-row { display: flex; justify-content: space-between; padding: 10rpx 0; font-size: 26rpx; }
+.info-row .label { color: #888; }
+.info-row .value { color: #1A1A1A; }
+.info-row .value.price { color: #FF7F32; font-weight: 600; }
+.info-text { font-size: 26rpx; color: #666; display: block; margin-bottom: 8rpx; }
+
+.refund-btn { margin-top: 30rpx; background: #FF7F32; color: white; border-radius: 16rpx; }
+.empty { text-align: center; padding: 100rpx; color: #999; }
