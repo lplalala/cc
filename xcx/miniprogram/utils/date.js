@@ -5,14 +5,36 @@
 
 /**
  * 格式化日期为 YYYY-MM-DD
- * @param {Date} date - 日期对象
+ * @param {Date|string} date - 日期对象或字符串
  * @returns {string} 格式化后的日期字符串
  */
 function formatDate(date) {
-  const y = date.getFullYear();
-  const m = (date.getMonth() + 1).toString().padStart(2, '0');
-  const d = date.getDate().toString().padStart(2, '0');
-  return `${y}-${m}-${d}`;
+  if (!date) return '';
+  if (typeof date === 'string') return date;
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return '';
+  const y = d.getFullYear();
+  const m = (d.getMonth() + 1).toString().padStart(2, '0');
+  const day = d.getDate().toString().padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+/**
+ * 格式化日期时间为 YYYY-MM-DD HH:mm
+ * @param {Date|string} date - 日期对象或字符串
+ * @returns {string} 格式化后的日期时间字符串
+ */
+function formatDateTime(date) {
+  if (!date) return '';
+  if (typeof date === 'string') return date;
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return '';
+  const y = d.getFullYear();
+  const m = (d.getMonth() + 1).toString().padStart(2, '0');
+  const day = d.getDate().toString().padStart(2, '0');
+  const h = d.getHours().toString().padStart(2, '0');
+  const min = d.getMinutes().toString().padStart(2, '0');
+  return `${y}-${m}-${day} ${h}:${min}`;
 }
 
 /**
@@ -23,11 +45,10 @@ function formatDate(date) {
  */
 function addMonths(dateStr, months) {
   const [y, m, d] = dateStr.split('-').map(Number);
-  // 先取目标月份的第一天，再 setDate 夹到实际最大天数，避免月末溢出
   const date = new Date(y, m - 1 + months, 1);
   const targetMonth = date.getMonth();
   date.setDate(Math.min(d, new Date(date.getFullYear(), targetMonth + 1, 0).getDate()));
   return formatDate(date);
 }
 
-module.exports = { formatDate, addMonths };
+module.exports = { formatDate, formatDateTime, addMonths };

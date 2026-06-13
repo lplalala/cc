@@ -6,7 +6,11 @@ cloud.init({
 exports.main = async (event, context) => {
   // 获取从小程序端传来的 code
   const { code } = event;
-  
+
+  if (!code) {
+    return { success: false, errMsg: '缺少code参数' };
+  }
+
   try {
     // 调用微信开放接口，用 code 换取手机号
     const result = await cloud.openapi.phonenumber.getPhoneNumber({

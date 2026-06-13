@@ -1,5 +1,6 @@
 const db = wx.cloud.database();
 const { COLLECTIONS } = require('../../../utils/db');
+const { formatDateTime } = require('../../../utils/date');
 
 Page({
   data: {
@@ -17,7 +18,13 @@ Page({
 
   loadOrder(orderId) {
     db.collection(COLLECTIONS.ORDERS).doc(orderId).get().then(res => {
-      this.setData({ order: res.data });
+      const order = res.data;
+      // 格式化所有时间字段
+      if (order.createdAt) order.createdAt = formatDateTime(order.createdAt);
+      if (order.verifyTime) order.verifyTime = formatDateTime(order.verifyTime);
+      if (order.refundTime) order.refundTime = formatDateTime(order.refundTime);
+      if (order.refundApplyTime) order.refundApplyTime = formatDateTime(order.refundApplyTime);
+      this.setData({ order });
     }).catch(err => {
       console.error('加载订单失败', err);
       wx.showToast({ title: '订单加载失败', icon: 'none' });

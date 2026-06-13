@@ -74,12 +74,7 @@ swiper { height: 360rpx; }
   white-space: nowrap;
 }
 
-/* 第二行：星级 */
-.doctor-stars { display: flex; align-items: center; gap: 2rpx; margin-top: 0; margin-bottom: 6rpx; }
-.star { font-size: 24rpx; }
-.rating-text { font-size: 24rpx; color: #FF7F32; font-weight: 600; margin-left: 6rpx; }
-
-/* 第三行：简介（强制2行截断） */
+/* 简介（强制2行截断） */
 .doctor-desc {
   font-size: 26rpx; color: #666; line-height: 1.6;
   display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
@@ -141,7 +136,6 @@ swiper { height: 360rpx; }
   font-size: 22rpx; color: #1A8CFF; background: #EDF6FF;
   padding: 4rpx 14rpx; border-radius: 8rpx;
 }
-.od-stars { display: flex; align-items: center; gap: 2rpx; margin-top: 0; margin-bottom: 6rpx; }
 .od-desc { font-size: 26rpx; color: #666; line-height: 1.6; margin-bottom: 10rpx; }
 .od-tags { display: flex; gap: 10rpx; flex-wrap: wrap; }
 .od-tag {

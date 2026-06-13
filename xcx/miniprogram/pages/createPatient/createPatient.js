@@ -87,7 +87,7 @@ Page({
       wx.showToast({ title: '新建成功', icon: 'success' });
       // 将新建的就诊人 ID 暂存到全局，供上一页自动选中
       getApp().globalData._newPatientId = res._id;
-      setTimeout(() => {
+      this._navTimer = setTimeout(() => {
         wx.navigateBack();
       }, 800);
     }).catch(err => {
@@ -95,5 +95,9 @@ Page({
       console.error('保存就诊人失败', err);
       wx.showToast({ title: '保存失败，请重试', icon: 'none' });
     });
+  },
+
+  onUnload() {
+    if (this._navTimer) clearTimeout(this._navTimer);
   }
 });

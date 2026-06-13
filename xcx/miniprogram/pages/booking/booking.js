@@ -69,7 +69,9 @@ Page({
     if (!openid) return;
     db.collection(COLLECTIONS.PATIENTS).where({ openid }).get().then(res => {
       this.setData({ patients: res.data });
-    }).catch(() => {});
+    }).catch(err => {
+      console.error('加载就诊人失败:', err);
+    });
   },
 
   goAddPatient() {

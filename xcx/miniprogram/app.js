@@ -14,11 +14,15 @@ App({
     wx.cloud.callFunction({
       name: 'getOpenId'
     }).then(res => {
-      console.log('云函数返回 openid:', res.result.openid);
-      const openid = res.result.openid;
-      this.globalData.openid = openid;
-      wx.setStorageSync('openid', openid);   // 持久化，供各页面 fallback
-      this.checkAdmin(openid);
+      const openid = res && res.result ? res.result.openid : '';
+      console.log('云函数返回 openid:', openid);
+      if (openid) {
+        this.globalData.openid = openid;
+        wx.setStorageSync('openid', openid);
+        this.checkAdmin(openid);
+      } else {
+        console.warn('未获取到 openid，将使用缓存值');
+      }
     }).catch(err => {
       console.error('云函数调用失败:', err);
     });

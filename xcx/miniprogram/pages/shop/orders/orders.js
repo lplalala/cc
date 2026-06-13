@@ -1,5 +1,6 @@
 const db = wx.cloud.database();
 const { COLLECTIONS } = require('../../../utils/db');
+const { formatDateTime } = require('../../../utils/date');
 
 Page({
   data: {
@@ -58,9 +59,13 @@ Page({
       .limit(that.data.pageSize)
       .get()
       .then(res => {
-        const orders = page === 1 ? res.data : [...that.data.orders, ...res.data];
+        const orders = res.data.map(o => ({
+          ...o,
+          createdAt: formatDateTime(o.createdAt)
+        }));
+        const merged = page === 1 ? orders : [...that.data.orders, ...orders];
         that.setData({
-          orders,
+          orders: merged,
           page,
           hasMore: res.data.length >= that.data.pageSize,
           loading: false

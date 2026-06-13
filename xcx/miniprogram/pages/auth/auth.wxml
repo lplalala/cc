@@ -3,8 +3,13 @@
     <text class="auth-title">欢迎来到同进仁华口腔</text>
     <text class="auth-desc">授权手机号并填写昵称后进入</text>
 
+    <!-- 加载中 -->
+    <view wx:if="{{loading}}" class="auth-loading">
+      <text>初始化中...</text>
+    </view>
+
     <!-- 第一步：手机号授权按钮 -->
-    <view wx:if="{{!phone}}">
+    <view wx:elif="{{!phone}}">
       <button 
         class="auth-btn" 
         open-type="getPhoneNumber" 

@@ -79,7 +79,7 @@ exports.main = async (event, context) => {
       outTradeNo: orderNo,
       totalFee: Math.round(totalAmount * 100), // 单位：分
       spbillCreateIp: '127.0.0.1',
-      subMchId: '',
+      subMchId: '1746314749',
       functionName: 'handlePaymentCallback',
       envId: 'cloud1-1g26c0bcee3c74ed',
       tradeType: 'JSAPI',

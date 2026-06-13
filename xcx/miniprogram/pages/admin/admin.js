@@ -2,6 +2,7 @@ const db = wx.cloud.database();
 const { convertCloudUrls } = require('../../utils/cloud');
 const { COLLECTIONS } = require('../../utils/db');
 const { showModalAsync } = require('../../utils/ui');
+const { formatDateTime } = require('../../utils/date');
 
 Page({
   data: {
@@ -84,7 +85,7 @@ Page({
     }
     if (idx === 7) {
       jobs.push(db.collection(COLLECTIONS.ORDERS).where({ status: this.data.orderTab }).limit(PAGE_SIZE).orderBy('createdAt', 'desc').get()
-        .then(res => this.setData({ adminOrders: res.data }))
+        .then(res => this.setData({ adminOrders: res.data.map(o => ({ ...o, createdAt: formatDateTime(o.createdAt) })) }))
         .catch(() => this.setData({ adminOrders: [] })));
     }
 

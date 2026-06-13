@@ -29,12 +29,6 @@
           <text class="doctor-name">{{item.name}}</text>
           <text class="doctor-title-tag">{{item.title}}</text>
         </view>
-        <view class="doctor-stars">
-          <text class="star" wx:for="{{[1,2,3,4,5]}}" wx:key="*this">
-            {{item.rating >= item ? '⭐' : '☆'}}
-          </text>
-          <text class="rating-text" wx:if="{{item.rating}}">{{item.rating}}.0</text>
-        </view>
         <text class="doctor-desc">{{item.description}}</text>
         <view class="doctor-tags" wx:if="{{item.specialties && item.specialties.length}}">
           <text class="tag" wx:for="{{item.specialties}}" wx:key="*this" wx:for-item="s">{{s}}</text>
@@ -60,12 +54,6 @@
       <view class="od-name-row">
         <text class="od-name">{{currentDoctor.name}}</text>
         <text class="od-title">{{currentDoctor.title}}</text>
-      </view>
-      <view class="od-stars">
-        <text class="star" wx:for="{{[1,2,3,4,5]}}" wx:key="*this">
-          {{currentDoctor.rating >= item ? '⭐' : '☆'}}
-        </text>
-        <text class="rating-text" wx:if="{{currentDoctor.rating}}">{{currentDoctor.rating}}.0</text>
       </view>
       <text class="od-desc">{{currentDoctor.description}}</text>
       <view class="od-tags" wx:if="{{currentDoctor.specialties && currentDoctor.specialties.length}}">
