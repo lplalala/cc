@@ -1,4 +1,4 @@
-/* ======== 注意事项 — 四宫格展示 ======== */
+/* ======== 注意事项 — 列表纯标题 + 点击展开图片 ======== */
 
 .container { padding: 24rpx; min-height: 100vh; background: #F5F7FA; }
 
@@ -14,7 +14,7 @@
 .empty-icon { font-size: 80rpx; margin-bottom: 20rpx; }
 .empty-text { font-size: 28rpx; color: #999; }
 
-/* ======== 四宫格 ======== */
+/* ======== 四宫格列表 ======== */
 .notice-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -25,69 +25,52 @@
 .notice-card {
   background: #FFFFFF;
   border-radius: 16rpx;
-  overflow: hidden;
+  padding: 48rpx 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.06);
   transition: transform 0.15s;
+  min-height: 160rpx;
 }
 .notice-card:active { transform: scale(0.97); }
 
-.notice-image {
-  width: 100%;
-  height: 260rpx;
-  background: #E8F4FD;
-  display: block;
-}
-
-.notice-text-area {
-  padding: 16rpx 20rpx 20rpx;
-}
-
 .notice-title {
-  font-size: 30rpx;
-  font-weight: 700;
-  color: #1A1A1A;
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* ======== 详情弹窗 ======== */
-.detail-mask {
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.5); z-index: 2000;
-}
-.detail-panel {
-  position: fixed; bottom: 0; left: 0; right: 0; top: 80rpx;
-  background: #FFFFFF;
-  border-radius: 32rpx 32rpx 0 0;
-  z-index: 2001;
-  display: flex;
-  flex-direction: column;
-  transform: translateY(100%);
-  transition: transform 0.3s ease;
-}
-.detail-panel.show { transform: translateY(0); }
-
-.detail-close {
-  position: absolute; top: 20rpx; right: 20rpx; z-index: 10;
-  width: 52rpx; height: 52rpx; line-height: 52rpx;
-  text-align: center; background: rgba(0,0,0,0.2);
-  color: #FFF; border-radius: 50%; font-size: 28rpx;
-}
-
-.detail-body {
-  flex: 1;
-  padding: 40rpx 30rpx;
-  overflow-y: auto;
-}
-
-.detail-title {
   font-size: 36rpx;
   font-weight: 700;
   color: #1A1A1A;
-  display: block;
-  margin-bottom: 30rpx;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* ======== 详情页 ======== */
+.detail-page {
+  min-height: 100vh;
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 20rpx 0 30rpx;
+}
+
+.back-btn {
+  font-size: 28rpx;
+  color: #1A8CFF;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.detail-page-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #FF9800;
+  flex: 1;
+}
+
+.detail-images {
+  /* 占满剩余空间 */
 }
 
 .detail-image {

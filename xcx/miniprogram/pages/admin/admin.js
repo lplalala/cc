@@ -364,9 +364,9 @@ Page({
             data: { orderId, reason: '管理员操作退款' }
           }).then(resp => {
             if (resp.result.success) {
-              wx.showToast({ title: '退款成功', icon: 'success' });
+              wx.showToast({ title: '退款申请已提交，预计1-3个工作日到账', icon: 'success', duration: 3000 });
             } else {
-              wx.showToast({ title: resp.result.errMsg, icon: 'none' });
+              wx.showToast({ title: resp.result.errMsg, icon: 'none', duration: 3000 });
             }
             this.loadAllData();
           });

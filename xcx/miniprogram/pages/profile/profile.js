@@ -16,15 +16,28 @@ Page({
 
   onLoad() {
     const app = getApp();
+    // 检查是否已退出登录
+    const loggedOut = wx.getStorageSync('loggedOut');
+    if (loggedOut) {
+      this.setData({
+        phone: '',
+        openid: '',
+        isAdmin: false
+      });
+      return; // 不自动加载用户数据
+    }
+
     this.setData({
       phone: app.globalData.phone || wx.getStorageSync('userPhone') || '',
-      openid: app.globalData.openid || '',
+      openid: app.globalData.openid || wx.getStorageSync('openid') || '',
       isAdmin: app.globalData.isAdmin || false
     });
     this.loadUserInfo();
   },
 
   onShow() {
+    // 已退出登录则跳过自动加载
+    if (wx.getStorageSync('loggedOut')) return;
     // 首次加载或标记脏数据时才重新请求
     if (!this._initialized) {
       this._initialized = true;
@@ -142,8 +155,31 @@ Page({
   },
 
   logout() {
-    wx.removeStorageSync('userPhone');
-    getApp().globalData.phone = '';
+    // 清除所有用户相关本地存储
+    const keysToRemove = [
+      'openid',           // 用户 openid
+      'userPhone',        // 手机号
+      'userNickName',     // 昵称
+      'userInfo',         // 用户信息
+      'sessionKey',       // 会话密钥
+      'userAvatarUrl'     // 头像
+    ];
+    keysToRemove.forEach(key => {
+      try { wx.removeStorageSync(key); } catch (e) { /* 忽略单个清除失败 */ }
+    });
+
+    // 设置已退出标记，防止自动恢复登录
+    wx.setStorageSync('loggedOut', true);
+
+    // 重置全局状态
+    const app = getApp();
+    app.globalData.openid = '';
+    app.globalData.phone = '';
+    app.globalData.nickName = '';
+    app.globalData.isAdmin = false;
+    app.globalData.userInfo = null;
+
+    // 关闭所有页面，跳转到授权页
     wx.reLaunch({ url: '/pages/auth/auth' });
   }
 });

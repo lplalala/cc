@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 本仓库包含两个独立项目：
 
 - **`pomodoro.html`** — 单文件番茄钟应用，无依赖，浏览器直接打开
-- **`xcx/`** — 同进仁华口腔连锁微信小程序（云开发），主要工作区
+- **`xcx/`** — 同进仁华口腔连锁微信小程序（云开发），主要工作区。用户端+管理端集成在同一小程序内，计划后续拆分独立 Web 后台。
 
 另有财务对账相关的 Excel 文件（`交易明细_*.xls`）会临时出现在根目录。
 
@@ -29,8 +29,8 @@ xcx/
     getOpenId/             #  获取用户 openid
     getRealPhone/          #  手机号授权解密
     updateUserInfo/        #  更新用户昵称
-    createOrder/           #  [商城] 创建订单 + 统一下单
-    handlePaymentCallback/ #  [商城] 支付回调，生成核销码，扣库存
+    createOrder/           #  [商城] 创建订单 + API v2 统一下单（依赖 xml2js）
+    handlePaymentCallback/ #  [商城] 支付回调（前端主动调用），更新订单+扣库存
     verifyCode/            #  [商城] 核销（需管理员权限）
     refundOrder/           #  [商城] 退款（需管理员权限）
   miniprogram/
@@ -58,12 +58,14 @@ xcx/
 
 - **数据库**：集合名通过 `COLLECTIONS` 常量引用，不可硬编码字符串
 - **性能**：admin 后台按需加载 Tab 数据；首页 `Promise.all()` 并行查询；合并 `setData` 调用
-- **支付**：`PAYMENT_CONFIG.isMock` 控制模拟/真实支付；核销码 6 位，字段名 `verify_code`
+- **支付**：API v2 直连方案（`api.mch.weixin.qq.com/pay/unifiedorder`），MD5 签名，XML 解析。云函数 `createOrder` 依赖 `xml2js`。前端仅走真实支付，不保留模拟支付回退
 - **图片**：云存储图片用 `convertCloudUrls()` 转换；商品默认占位图 `/images/default-goods-image.png`
-- **挂号**：医生卡片点击展开全屏 Overlay；`+新建` 跳转独立页面；`try/catch+await` 写入 + 10s 超时；三重防过期（日历UI禁用+时段过滤+提交校验）；`appointments` 强制含 `openid` 字段；查询按 `openid` 非 `phone`
-- **样式**：宝矿力主题 `#1A8CFF` / `#FF7F32`；卡片白底 16rpx 圆角；医生 Overlay `position:fixed; bottom`；时段上午3个/下午6个各1小时（9:00-20:00）
+- **挂号**：医生卡片点击展开全屏 Overlay；日期生成 `今天+7天`（不再按周一到周日）；时段分三区（上午3/下午3/晚上3）；三重防过期；`appointments` 强制含 `openid`；查询按 `openid` 非 `phone`
+- **样式**：宝矿力主题 `#1A8CFF` / `#FF7F32`；卡片白底 16rpx 圆角；医生卡片姓名与星级间距为 0；医生 Overlay `position:fixed; bottom`
 - **质保卡**：京东礼品卡风格深蓝渐变 + 金色；`endDate==='终身'` 或 `is_lifetime` 强制终身显示
 - **鉴权**：云函数内查询 `admins` 集合判断 `openid`
+- **客服**：仅企业微信客服（`wx.openCustomerServiceChat`），已移除 `open-type="contact"` 原生客服
+- **注意事项**：首页四宫格入口，数据复用的 `projectTemplates` 集合（`name`+`noteImages[0]`），profile 页已移除注意事项入口
 - **后台**：admin Tab 4 挂号记录含日期筛选 picker，`YYYY-MM-DD` → `M月D日` 格式转换
 - **个人中心**：预约卡片两行紧凑布局；状态彩色标签
 
@@ -79,12 +81,15 @@ xcx/
 | `docx` | 官方 | 读写 Word |
 | `pdf` | 官方 | PDF 处理（Snyk 标记 High Risk） |
 | `reconciliation-helper` | 自定义 | **多平台财务对账**（核心工具） |
+| `attendance-calculator` | 自定义 | **考勤自动计算**（打卡月报→出勤统计） |
 | `skill-creator` | 官方 | 创建和优化 Skill |
 | `canvas-design` | 官方 | 图片/海报生成 |
 | `frontend-design` | 官方 | 前端界面设计 |
 | `miniprogram-development` | 系统内置 | 微信小程序开发 |
 
-Skills 安装信息记录在 `skills-lock.json`。
+Skills 安装信息记录在 `skills-lock.json`。Skill 文件分布：
+- `.claude/skills/` — 自定义 Skill（reconciliation-helper、attendance-calculator、dental-secretary）
+- `.agents/skills/` — 官方 Skill 资源文件（xlsx、docx、pdf，通过 symlink 引用）
 
 ### reconciliation-helper（对账 Skill）
 
@@ -97,6 +102,39 @@ Skills 安装信息记录在 `skills-lock.json`。
 6. 冲销/作废记录配对
 
 详见 `.claude/skills/reconciliation-helper/SKILL.md`。
+
+### attendance-calculator（考勤 Skill）
+
+自动处理企业微信「上下班打卡_月报」Excel，生成考勤统计报告。核心规则（经多轮审核优化）：
+
+1. **三种班次**：早班 8:50-18:30 / 晚班 10:00-20:30 / 义诊班 7:30-21:00，双端 ±30min 匹配
+2. **核心原则**：单次打卡不猜（→缺卡），≥2次打卡有进出才判半天班/早退
+3. **半天班**：所有时间在半天区间 ±15min + 跨度 ≥90 分钟 → 上午 0.3 天 / 下午 0.5 天。上下午配对合并 → 1 天
+4. **迟到**：上班 > 班次上班 + 离起点 ≤180min（补卡豁免）
+5. **早退**：下班 < 班次下班，不限窗口（有进出就能判，补卡豁免）
+6. **缺卡**：单 punch / 跨度 <4h 双 punch / 无法匹配班次
+7. **乐捐**：¥20/次，同天多异常独立记录
+
+使用方式：`python .claude/skills/attendance-calculator/scripts/calculate.py <输入文件>`
+
+详见 `.claude/skills/attendance-calculator/SKILL.md`。
+
+### dental-secretary（口腔秘书 Skill）
+
+连接**领健 e看牙（LinkedCare）API**，以只读模式查询东莞同进仁华口腔诊所数据。核心能力：
+
+- **患者消费查询**：按病历号查累计消费 + 逐项收费明细
+- **经营分析**：预约量/初诊/复诊/到诊率/成交率、环比同比
+- **记录完整性检查**：初诊患者是否写了咨询记录 + 病历记录，按医生归类
+- **员工业绩核对**：读 Excel → 对照系统收费数据逐行核实
+
+关键坑：
+1. **`actualPrice` ≠ `totalPrice`**：收费明细中 `totalPrice` 是折前金额，展示给用户必须用 `actualPrice`（实收）
+2. **计费拆分**：系统会拆成多条明细行（如全瓷冠 0.8+0.1+0.1），需按 `(项目名, 牙位)` 归组合并
+3. **空行过滤**：`count=0, actualPrice=0` 是治疗计划占位，必须过滤
+4. **只读**：绝对不调用 PUT/DELETE 接口
+
+详见 `.claude/skills/dental-secretary/SKILL.md`。
 
 ## 重要规则
 

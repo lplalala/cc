@@ -78,6 +78,8 @@ Page({
     }).then(() => {
       wx.setStorageSync('userPhone', phone);
       wx.setStorageSync('userNickName', nickName);
+      // 清除退出登录标记 — 用户已重新授权
+      wx.removeStorageSync('loggedOut');
       getApp().globalData.phone = phone;
       getApp().globalData.nickName = nickName;
       wx.hideLoading();

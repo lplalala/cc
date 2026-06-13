@@ -1,5 +1,5 @@
 <!-- pages/notice/index.wxml -->
-<!-- 注意事项四宫格展示页，数据来源：projectTemplates 集合 -->
+<!-- 注意事项页 — 列表纯标题，点击展开图片 -->
 
 <view class="container">
   <!-- 加载中 -->
@@ -13,37 +13,31 @@
     <text class="empty-text">暂无注意事项</text>
   </view>
 
-  <!-- 四宫格列表 -->
+  <!-- 详情模式：展示单条注意事项的图片 -->
+  <view wx:elif="{{currentTemplate._id}}" class="detail-page">
+    <view class="detail-header">
+      <text class="back-btn" bindtap="backToList">← 返回</text>
+      <text class="detail-page-title">{{currentTemplate.name}}</text>
+    </view>
+    <scroll-view scroll-y class="detail-images">
+      <block wx:if="{{currentTemplate.imageUrls && currentTemplate.imageUrls.length > 0}}">
+        <image wx:for="{{currentTemplate.imageUrls}}" wx:key="*this"
+               src="{{item}}" mode="widthFix"
+               class="detail-image"
+               bindtap="previewImages" data-url="{{item}}"></image>
+      </block>
+      <view wx:else class="detail-empty">
+        <text>暂无图片</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 列表模式：四宫格纯标题 -->
   <view wx:else class="notice-grid">
     <view class="notice-card"
           wx:for="{{templates}}" wx:key="_id"
           bindtap="onNoticeTap" data-item="{{item}}">
-      <image src="{{item.coverImage}}"
-             mode="aspectFill"
-             class="notice-image"
-             lazy-load="true"></image>
-      <view class="notice-text-area">
-        <text class="notice-title">{{item.name}}</text>
-      </view>
+      <text class="notice-title">{{item.name}}</text>
     </view>
   </view>
-</view>
-
-<!-- ============ 详情弹窗 ============ -->
-<view class="detail-mask" wx:if="{{showDetail}}" bindtap="closeDetail"></view>
-<view class="detail-panel {{showDetail ? 'show' : ''}}" catchtap="stopBubble">
-  <view class="detail-close" bindtap="closeDetail">✕</view>
-  <scroll-view scroll-y class="detail-body">
-    <text class="detail-title">{{currentTemplate.name}}</text>
-    <!-- 展示所有 noteImages -->
-    <block wx:if="{{currentTemplate.imageUrls && currentTemplate.imageUrls.length > 0}}">
-      <image wx:for="{{currentTemplate.imageUrls}}" wx:key="*this"
-             src="{{item}}" mode="widthFix"
-             class="detail-image"
-             bindtap="previewImages" data-url="{{item}}"></image>
-    </block>
-    <view wx:else class="detail-empty">
-      <text>暂无图片</text>
-    </view>
-  </scroll-view>
 </view>

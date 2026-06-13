@@ -1,4 +1,4 @@
-<!-- 商品表单页 -->
+<!-- 商品表单页 v2.0 — 支持升级推荐 -->
 <view class="form-container">
   <view class="form-item">
     <text class="label">商品名称 *</text>
@@ -51,5 +51,53 @@
     <button wx:else class="img-btn" bindtap="chooseImage">选择图片</button>
   </view>
 
+  <!-- ========== 升级推荐管理 ========== -->
+  <view class="form-section">
+    <view class="section-header">
+      <text class="section-label">升级推荐（选填）</text>
+      <text class="add-link" bindtap="addUpgrade">+ 添加推荐</text>
+    </view>
+    <view wx:if="{{upgradeOptions.length === 0}}" class="hint">推荐用户升级到更好的产品/材料，列表第一项展示在详情弹窗中</view>
+    <view class="upgrade-block" wx:for="{{upgradeOptions}}" wx:key="index">
+      <view class="upgrade-header">
+        <text class="upgrade-index">推荐 #{{index + 1}}</text>
+        <text class="spec-delete" data-index="{{index}}" bindtap="deleteUpgrade">✕</text>
+      </view>
+
+      <!-- 升级目标商品选择器 -->
+      <view class="upgrade-picker-row">
+        <text class="mini-label">目标商品</text>
+        <picker mode="selector" range="{{allProductNames}}" data-index="{{index}}" bindchange="onUpgradeProductChange">
+          <view class="picker-view picker-view-sm">{{item.productId ? item.name : '请选择升级目标商品'}}</view>
+        </picker>
+      </view>
+
+      <input class="input" value="{{item.name}}" data-index="{{index}}" data-field="upName" bindinput="onUpgradeInput" placeholder="升级商品名称（选择目标商品自动填充）" />
+      <input class="input" value="{{item.priceDiff}}" data-index="{{index}}" data-field="upPriceDiff" bindinput="onUpgradeInput" type="digit" placeholder="差价（正数），如：3000" />
+
+      <!-- 推荐图片 -->
+      <view class="upgrade-image-row">
+        <text class="mini-label">推荐图片</text>
+        <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="aspectFill" class="upgrade-thumb" data-index="{{index}}" bindtap="chooseUpgradeImage" />
+        <button wx:else class="mini-upload-btn" data-index="{{index}}" bindtap="chooseUpgradeImage">选择图片</button>
+        <text wx:if="{{item.imageUrl}}" class="clear-img" data-index="{{index}}" bindtap="clearUpgradeImage">清除</text>
+      </view>
+
+      <!-- 性能提升指标 -->
+      <view class="nested-section">
+        <view class="sub-header">
+          <text class="sub-label">性能提升指标</text>
+          <text class="add-link" data-upgrade-index="{{index}}" bindtap="addImprovement">+ 添加</text>
+        </view>
+        <view class="improve-row" wx:for="{{item.improvements}}" wx:key="iIdx" wx:for-index="iIdx" wx:for-item="imp">
+          <input class="improve-label-input" value="{{imp.label}}" data-upgrade-index="{{index}}" data-improve-index="{{iIdx}}" data-field="impLabel" bindinput="onImproveInput" placeholder="指标" />
+          <input class="improve-value-input" value="{{imp.value}}" data-upgrade-index="{{index}}" data-improve-index="{{iIdx}}" data-field="impValue" bindinput="onImproveInput" placeholder="值" />
+          <text class="spec-delete" data-upgrade-index="{{index}}" data-improve-index="{{iIdx}}" bindtap="deleteImprovement">✕</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
   <button class="save-btn" bindtap="save">保存</button>
+  <view class="safe-bottom"></view>
 </view>

@@ -10,8 +10,7 @@ Page({
   data: {
     templates: [],
     loading: true,
-    // 详情弹窗
-    showDetail: false,
+    // 当前查看的注意事项（有 _id 即进入详情模式）
     currentTemplate: {}
   },
 
@@ -60,10 +59,9 @@ Page({
     wx.stopPullDownRefresh();
   },
 
-  /** 点击某条注意事项 → 转换全部图片后展示详情弹窗 */
+  /** 点击某条注意事项 → 转换全部图片后直接展示 */
   async onNoticeTap(e) {
     const item = e.currentTarget.dataset.item;
-    // 转换所有 noteImages 为临时链接
     const noteImages = item.noteImages || [];
     let imageUrls = [];
     if (noteImages.length > 0) {
@@ -72,7 +70,6 @@ Page({
         wx.showLoading({ title: '加载中...' });
         try {
           const urlRes = await wx.cloud.getTempFileURL({ fileList: cloudFiles });
-          // 构建完整 URL 列表（保持原始顺序）
           const urlMap = {};
           urlRes.fileList.forEach(f => { urlMap[f.fileID] = f.tempFileURL; });
           imageUrls = noteImages.map(f => urlMap[f] || f);
@@ -85,9 +82,13 @@ Page({
       }
     }
     this.setData({
-      showDetail: true,
       currentTemplate: { ...item, imageUrls }
     });
+  },
+
+  /** 返回列表 */
+  backToList() {
+    this.setData({ currentTemplate: {} });
   },
 
   /** 预览大图 */
@@ -95,13 +96,5 @@ Page({
     const url = e.currentTarget.dataset.url;
     const urls = this.data.currentTemplate.imageUrls || [];
     wx.previewImage({ current: url, urls });
-  },
-
-  /** 关闭详情弹窗 */
-  closeDetail() {
-    this.setData({ showDetail: false, currentTemplate: {} });
-  },
-
-  /** 阻止冒泡 */
-  stopBubble() {}
+  }
 });

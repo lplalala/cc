@@ -113,17 +113,28 @@
   <view wx:if="{{tab==7}}" class="panel">
     <view class="sub-tabs">
       <text class="{{orderTab=='paid'?'active':''}}" bindtap="switchOrderTab" data-tab="paid">待核销</text>
+      <text class="{{orderTab=='refunding'?'active':''}}" bindtap="switchOrderTab" data-tab="refunding">退款中</text>
       <text class="{{orderTab=='verified'?'active':''}}" bindtap="switchOrderTab" data-tab="verified">已核销</text>
       <text class="{{orderTab=='refunded'?'active':''}}" bindtap="switchOrderTab" data-tab="refunded">已退款</text>
     </view>
     <view class="list-item" wx:for="{{adminOrders}}" wx:key="_id">
       <view class="info-line">
         <text>{{item.orderNo}}</text>
+        <text wx:if="{{item.isUpgrade}}" class="sub upgrade-hint">⚡升级订单</text>
         <text class="sub">{{item.nickName || '用户'}} | ¥{{item.totalAmount}}</text>
+        <text wx:if="{{item.selectedSpec}}" class="sub">规格：{{item.selectedSpec}}</text>
+        <!-- 配送方式 -->
+        <text class="sub delivery-info">
+          {{item.deliveryMethod === 'express' ? '📦 快递配送' : '🏥 到店自取'}}
+          <block wx:if="{{item.deliveryMethod === 'express' && item.shippingAddress}}">
+            | {{item.shippingAddress.recipientName}} {{item.shippingAddress.recipientPhone}}
+          </block>
+        </text>
         <text class="sub">{{item.createdAt}}</text>
       </view>
       <button wx:if="{{item.status === 'paid'}}" size="mini" bindtap="verifyOrder" data-id="{{item._id}}">核销</button>
       <button wx:if="{{item.status === 'paid'}}" size="mini" bindtap="refundOrder" data-id="{{item._id}}">退款</button>
+      <text wx:if="{{item.status === 'refunding'}}" class="sub refunding-hint">⏳ 退款处理中</text>
     </view>
     <view wx:if="{{adminOrders.length===0}}" class="empty">暂无订单</view>
   </view>

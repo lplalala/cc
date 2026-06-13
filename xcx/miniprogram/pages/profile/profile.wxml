@@ -1,12 +1,12 @@
 <view class="profile-container">
   <!-- 用户信息卡片 -->
-<!-- 已登录：显示用户信息 -->
-<view class="user-card" wx:if="{{phone}}">
+<!-- 已登录：显示用户信息（有openid即视为已登录） -->
+<view class="user-card" wx:if="{{openid}}">
   <image class="avatar" src="/images/default-avatar.jpg" mode="aspectFill"></image>
   <view class="user-info">
     <input class="nick-name" type="nickname" placeholder="点击设置昵称" value="{{nickName}}" bindblur="onNickNameBlur" />
     <view class="phone-id-row">
-      <text class="user-phone">{{phone}}</text>
+      <text class="user-phone">{{phone || '未绑定手机号'}}</text>
       <view class="id-copy-box">
         <text class="user-id">ID: {{openid}}</text>
         <text class="copy-btn" bindtap="copyId">复制</text>

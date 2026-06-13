@@ -48,7 +48,7 @@ Page({
         }).then(resp => {
           wx.hideLoading();
           if (resp.result.success) {
-            wx.showToast({ title: '退款成功', icon: 'success' });
+            wx.showToast({ title: '退款申请已提交，预计1-3个工作日到账', icon: 'success', duration: 3000 });
             this.loadOrder(this.data.orderId);
           } else {
             wx.showToast({ title: resp.result.errMsg || '退款失败', icon: 'none' });

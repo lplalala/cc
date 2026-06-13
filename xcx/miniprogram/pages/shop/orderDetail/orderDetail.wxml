@@ -1,10 +1,13 @@
-<!-- 订单详情页 -->
+<!-- 订单详情页 v2.0 — 支持配送/升级信息展示 -->
 <view class="container" wx:if="{{order}}">
   <!-- 状态横幅 -->
   <view class="status-banner {{order.status}}">
     <text class="status-text">
-      {{order.status === 'paid' ? '待核销' : (order.status === 'verified' ? '已核销' : '已退款')}}
+      {{order.status === 'paid' ? '待核销' : (order.status === 'verified' ? '已核销' : (order.status === 'refunding' ? '退款中' : '已退款'))}}
     </text>
+    <text wx:if="{{order.status === 'refunding'}}" class="status-sub">退款处理中，预计1-3个工作日到账</text>
+    <!-- 升级订单标记 -->
+    <text wx:if="{{order.isUpgrade}}" class="upgrade-badge-inline">⚡ 升级订单</text>
   </view>
 
   <!-- 商品列表 -->
@@ -15,7 +18,27 @@
       <view class="info">
         <text class="name">{{prod.productName}}</text>
         <text class="meta">×{{prod.quantity}}  ¥{{prod.price}}</text>
+        <text wx:if="{{order.selectedSpec}}" class="meta spec-meta">规格：{{order.selectedSpec}}</text>
       </view>
+    </view>
+  </view>
+
+  <!-- 配送信息 -->
+  <view class="card">
+    <text class="section-title">配送信息</text>
+    <view class="delivery-card-inner">
+      <text class="delivery-type">
+        {{order.deliveryMethod === 'express' ? '📦 快递配送' : '🏥 到店自取'}}
+      </text>
+      <block wx:if="{{order.deliveryMethod === 'express' && order.shippingAddress}}">
+        <view class="address-detail">
+          <text class="addr-line">收货人：{{order.shippingAddress.recipientName}}  {{order.shippingAddress.recipientPhone}}</text>
+          <text class="addr-line">地址：{{order.shippingAddress.recipientRegion}} {{order.shippingAddress.recipientAddress}}</text>
+        </view>
+      </block>
+      <block wx:elif="{{order.deliveryMethod === 'pickup'}}">
+        <text class="pickup-hint">请到店出示核销码</text>
+      </block>
     </view>
   </view>
 
@@ -29,7 +52,14 @@
     <button class="copy-btn" bindtap="copyCode">复制核销码</button>
   </view>
 
-  <!-- 核销信息（已核销/已退款） -->
+  <!-- 退款中记录 -->
+  <view class="card" wx:elif="{{order.status === 'refunding'}}">
+    <text class="section-title">退款处理中</text>
+    <text class="info-text">申请时间：{{order.refundApplyTime}}</text>
+    <text class="info-text" wx:if="{{order.refundReason}}">退款原因：{{order.refundReason}}</text>
+    <text class="info-text refund-hint">💡 退款申请已提交，预计1-3个工作日内到账</text>
+  </view>
+  <!-- 核销/退款记录 -->
   <view class="card" wx:elif="{{order.status === 'verified'}}">
     <text class="section-title">核销记录</text>
     <text class="info-text">核销时间：{{order.verifyTime}}</text>
@@ -45,6 +75,8 @@
     <text class="section-title">订单信息</text>
     <view class="info-row"><text class="label">订单编号</text><text class="value">{{order.orderNo}}</text></view>
     <view class="info-row"><text class="label">下单时间</text><text class="value">{{order.createdAt}}</text></view>
+    <view class="info-row"><text class="label">手机号</text><text class="value">{{order.phone || '-'}}</text></view>
+    <view wx:if="{{order.remark}}" class="info-row"><text class="label">备注</text><text class="value">{{order.remark}}</text></view>
     <view class="info-row"><text class="label">支付金额</text><text class="value price">¥{{order.totalAmount}}</text></view>
   </view>
 

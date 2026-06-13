@@ -16,7 +16,7 @@ Page({
   // 复制核销码
   copyCode() {
     wx.setClipboardData({
-      data: this.data.verify_code,
+      data: this.data.verificationCode,
       success: () => wx.showToast({ title: '已复制核销码', icon: 'success' })
     });
   },

@@ -1,4 +1,4 @@
-/* ======== 商城首页 — 宝矿力清新风格 ======== */
+/* ======== 商城首页 — 宝矿力清新风格 v2.0 ======== */
 page { background: #F5F7FA; }
 
 /* 分类导航 */
@@ -37,6 +37,7 @@ page { background: #F5F7FA; }
   overflow: hidden;
   box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.04);
   transition: transform 0.2s;
+  position: relative;
 }
 .product-card:active { transform: scale(0.98); }
 
@@ -64,13 +65,30 @@ page { background: #F5F7FA; }
 .product-price { font-size: 34rpx; font-weight: 700; color: #FF7F32; }
 .product-original { font-size: 22rpx; color: #999; text-decoration: line-through; }
 
+/* 标签 */
 .tag-row { display: flex; gap: 8rpx; flex-wrap: wrap; }
 .tag {
-  font-size: 20rpx;
+  font-size: 24rpx;
   color: #FF7F32;
   background: #FFF3EB;
-  padding: 2rpx 10rpx;
-  border-radius: 4rpx;
+  padding: 6rpx 12rpx;
+  border-radius: 8rpx;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* 升级推荐角标 */
+.upgrade-badge {
+  margin-top: 8rpx;
+  background: linear-gradient(135deg, #1A8CFF, #005FCC);
+  border-radius: 20rpx;
+  padding: 4rpx 16rpx;
+  display: inline-block;
+}
+.upgrade-badge text {
+  font-size: 20rpx;
+  color: #FFFFFF;
+  font-weight: 500;
 }
 
 /* 加载状态 */
@@ -88,12 +106,12 @@ page { background: #F5F7FA; }
   background: #FFFFFF;
   border-radius: 32rpx 32rpx 0 0;
   z-index: 101;
-  max-height: 80vh;
-  overflow-y: auto;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
   transform: translateY(100%);
   transition: transform 0.3s ease;
 }
-
 .detail-popup.show { transform: translateY(0); }
 
 .detail-close {
@@ -104,14 +122,38 @@ page { background: #F5F7FA; }
   border-radius: 50%; font-size: 28rpx; z-index: 10;
 }
 
+.detail-scroll { flex: 1; overflow-y: auto; }
+
 .detail-img { width: 100%; height: 400rpx; background: #E8F4FD; }
 
 .detail-body { padding: 30rpx; }
 .detail-name { font-size: 34rpx; font-weight: 700; display: block; margin-bottom: 12rpx; }
 .detail-price { font-size: 40rpx; font-weight: 700; color: #FF7F32; display: block; margin-bottom: 16rpx; }
 .detail-desc { font-size: 26rpx; color: #666; display: block; margin-bottom: 12rpx; line-height: 1.6; }
-.detail-notes { font-size: 24rpx; color: #999; display: block; margin-bottom: 12rpx; }
 
+/* 注意事项 */
+.detail-notes-section {
+  background: #FFF8F0;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-bottom: 16rpx;
+  border-left: 6rpx solid #FF9800;
+}
+.notes-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #FF9800;
+  display: block;
+  margin-bottom: 12rpx;
+}
+.notes-content {
+  font-size: 28rpx;
+  color: #555;
+  display: block;
+  line-height: 1.8;
+}
+
+/* 数量 */
 .qty-row { display: flex; justify-content: space-between; align-items: center; padding: 20rpx 0; border-top: 1rpx solid #EEE; }
 .qty-label { font-size: 28rpx; }
 .qty-ctrl { display: flex; align-items: center; gap: 20rpx; }
@@ -120,17 +162,98 @@ page { background: #F5F7FA; }
   text-align: center; font-size: 32rpx;
   border-radius: 50%; background: #F0F4F8; color: #1A8CFF;
 }
+.qty-btn:active { background: #E0E8F0; }
+.qty-btn.disabled { color: #CCC; background: #F5F5F5; pointer-events: none; }
 .qty-num { font-size: 32rpx; font-weight: 600; min-width: 40rpx; text-align: center; }
 
+/* 合计 */
 .total-row { display: flex; justify-content: space-between; align-items: center; padding: 20rpx 0; }
-.total-label { font-size: 28rpx; }
+.total-label { font-size: 28rpx; color: #666; }
 .total-price { font-size: 36rpx; font-weight: 700; color: #FF7F32; }
 
+/* ===== 升级推荐 ===== */
+.upgrade-section {
+  padding: 0 30rpx 16rpx;
+  flex-shrink: 0;
+}
+.upgrade-divider {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+}
+.divider-line { flex: 1; height: 1rpx; background: #E0E0E0; }
+.divider-text {
+  font-size: 24rpx;
+  color: #1A8CFF;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.upgrade-card {
+  background: linear-gradient(135deg, #F0F7FF 0%, #E8F4FD 100%);
+  border-radius: 16rpx;
+  border: 2rpx solid #C5DFF8;
+  padding: 20rpx;
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 12rpx;
+}
+.upgrade-img {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 12rpx;
+  background: #D8EAF8;
+  flex-shrink: 0;
+}
+.upgrade-info { flex: 1; display: flex; flex-direction: column; gap: 8rpx; }
+.upgrade-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1A1A1A;
+  display: block;
+}
+.upgrade-price-row { display: flex; align-items: baseline; gap: 8rpx; }
+.upgrade-label { font-size: 22rpx; color: #999; }
+.upgrade-price { font-size: 32rpx; font-weight: 700; color: #1A8CFF; }
+
+.improvements { display: flex; flex-wrap: wrap; gap: 8rpx; }
+.improve-item {
+  background: #FFFFFF;
+  border-radius: 8rpx;
+  padding: 6rpx 14rpx;
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+}
+.improve-label { font-size: 20rpx; color: #666; }
+.improve-value { font-size: 20rpx; color: #1A8CFF; font-weight: 600; }
+
+.upgrade-btn {
+  background: linear-gradient(135deg, #1A8CFF, #0066DD);
+  color: #FFFFFF;
+  border-radius: 12rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+  padding: 14rpx 0;
+  border: none;
+  line-height: 1.4;
+}
+.upgrade-btn:active { opacity: 0.85; }
+
+/* 底部购买按钮 */
+.detail-footer {
+  padding: 16rpx 30rpx 30rpx;
+  flex-shrink: 0;
+  padding-bottom: calc(30rpx + env(safe-area-inset-bottom));
+}
 .buy-btn {
-  margin: 0 30rpx 30rpx;
-  background: #1A8CFF;
-  color: white;
+  background: #FF7F32;
+  color: #FFFFFF;
   border-radius: 16rpx;
   font-size: 32rpx;
   font-weight: 600;
+  border: none;
+  line-height: 2.4;
 }
+.buy-btn:active { opacity: 0.85; }

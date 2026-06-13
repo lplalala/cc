@@ -64,6 +64,19 @@ button { margin: 5rpx !important; }
 
 .empty { text-align: center; color: #999; padding: 40rpx; }
 
+/* 升级订单标记 */
+.upgrade-hint {
+  color: #1A8CFF !important;
+  font-weight: 500;
+}
+.delivery-info {
+  color: #1A8CFF !important;
+}
+.refunding-hint {
+  color: #E6A23C !important;
+  font-weight: 500;
+}
+
 /* 日期选择器 */
 .date-picker-row {
   display: flex;

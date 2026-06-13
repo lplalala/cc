@@ -1,5 +1,5 @@
 <!--pages/shop/index/index.wxml-->
-<!-- 商城首页：分类导航 + 商品网格 -->
+<!-- 商城首页：分类导航 + 商品网格 + 升级推荐弹窗 -->
 
 <!-- 分类横滑导航 -->
 <scroll-view class="category-bar" scroll-x enable-flex>
@@ -26,6 +26,10 @@
         <view wx:if="{{item.tags && item.tags.length}}" class="tag-row">
           <text class="tag" wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag">{{tag}}</text>
         </view>
+        <!-- 升级推荐角标 -->
+        <view wx:if="{{item.upgrade_options && item.upgrade_options.length}}" class="upgrade-badge">
+          <text>可升级</text>
+        </view>
       </view>
     </view>
   </block>
@@ -42,30 +46,78 @@
 <view class="detail-mask" wx:if="{{showDetail}}" bindtap="closeDetail"></view>
 <view class="detail-popup {{showDetail ? 'show' : ''}}">
   <view class="detail-close" bindtap="closeDetail">✕</view>
-  <image src="{{currentProduct.imageUrl || '/images/default-goods-image.png'}}"
-         mode="aspectFill" class="detail-img" />
-  <view class="detail-body">
-    <text class="detail-name">{{currentProduct.name}}</text>
-    <text class="detail-price">¥{{currentProduct.price}}</text>
-    <text wx:if="{{currentProduct.description}}" class="detail-desc">{{currentProduct.description}}</text>
-    <text wx:if="{{currentProduct.detail}}" class="detail-notes">{{currentProduct.detail}}</text>
 
-    <!-- 数量选择 -->
-    <view class="qty-row">
-      <text class="qty-label">数量</text>
-      <view class="qty-ctrl">
-        <view class="qty-btn" data-type="minus" bindtap="onQuantityChange">−</view>
-        <text class="qty-num">{{buyQuantity}}</text>
-        <view class="qty-btn" data-type="plus" bindtap="onQuantityChange">+</view>
+  <scroll-view class="detail-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+    <image src="{{currentProduct.imageUrl || '/images/default-goods-image.png'}}"
+           mode="aspectFill" class="detail-img" />
+
+    <view class="detail-body">
+      <text class="detail-name">{{currentProduct.name}}</text>
+      <text class="detail-price">¥{{currentProduct.price}}</text>
+
+      <!-- 简要描述 -->
+      <text wx:if="{{currentProduct.description}}" class="detail-desc">{{currentProduct.description}}</text>
+
+      <!-- 注意事项 -->
+      <view wx:if="{{currentProduct.detail}}" class="detail-notes-section">
+        <text class="notes-title">⚠️ 注意事项</text>
+        <text class="notes-content">{{currentProduct.detail}}</text>
+      </view>
+
+      <!-- 数量选择 -->
+      <view class="qty-row">
+        <text class="qty-label">数量</text>
+        <view class="qty-ctrl">
+          <view class="qty-btn {{buyQuantity <= 1 ? 'disabled' : ''}}" data-type="minus" bindtap="onQuantityChange">−</view>
+          <text class="qty-num">{{buyQuantity}}</text>
+          <view class="qty-btn {{buyQuantity >= 10 ? 'disabled' : ''}}" data-type="plus" bindtap="onQuantityChange">+</view>
+        </view>
+      </view>
+
+      <!-- 合计 -->
+      <view class="total-row">
+        <text class="total-label">合计</text>
+        <text class="total-price">¥{{totalPrice}}</text>
       </view>
     </view>
 
-    <!-- 合计 -->
-    <view class="total-row">
-      <text class="total-label">合计</text>
-      <text class="total-price">¥{{totalPrice}}</text>
-    </view>
-  </view>
+    <!-- ===== 升级推荐 ===== -->
+    <view class="upgrade-section" wx:if="{{currentUpgrade}}">
+      <view class="upgrade-divider">
+        <view class="divider-line"></view>
+        <text class="divider-text">✨ 升级推荐</text>
+        <view class="divider-line"></view>
+      </view>
 
-  <button class="buy-btn" bindtap="goBuy">立即下单</button>
+      <view class="upgrade-card">
+        <image wx:if="{{currentUpgrade.imageUrl}}"
+               src="{{currentUpgrade.imageUrl}}"
+               mode="aspectFill"
+               class="upgrade-img" />
+
+        <view class="upgrade-info">
+          <text class="upgrade-name">{{currentUpgrade.name}}</text>
+
+          <view wx:if="{{currentUpgrade.priceDiff > 0}}" class="upgrade-price-row">
+            <text class="upgrade-label">补差价</text>
+            <text class="upgrade-price">+¥{{currentUpgrade.priceDiff}}</text>
+          </view>
+
+          <view class="improvements" wx:if="{{currentUpgrade.improvements && currentUpgrade.improvements.length}}">
+            <view class="improve-item" wx:for="{{currentUpgrade.improvements}}" wx:key="label">
+              <text class="improve-label">{{item.label}}</text>
+              <text class="improve-value">{{item.value}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <button class="upgrade-btn" bindtap="goUpgrade">🚀 立即升级</button>
+    </view>
+  </scroll-view>
+
+  <!-- 底部购买按钮 -->
+  <view class="detail-footer">
+    <button class="buy-btn" bindtap="goBuy">立即下单</button>
+  </view>
 </view>

@@ -10,6 +10,12 @@
     </view>
   </view>
 
+  <!-- 服务须知 -->
+  <view class="notice-card card" wx:if="{{product.detail}}">
+    <text class="notice-title">⚠️ 服务须知</text>
+    <text class="notice-content">{{product.detail}}</text>
+  </view>
+
   <!-- 手机号 -->
   <view class="form-card card">
     <text class="label">手机号</text>

@@ -40,4 +40,19 @@ const SHOP_CATEGORIES = [
   { id: 'pediatric', name: '儿童齿科' },
 ];
 
-module.exports = { ENV_ID, APP_NAME, CLINIC_LOCATION, WECOM_CS, PAYMENT_CONFIG, SHOP_CATEGORIES };
+/** 商品类型 */
+const PRODUCT_TYPES = [
+  { value: 'service', label: '服务类' },
+  { value: 'physical', label: '实物类' },
+];
+
+/** 配送方式 */
+const DELIVERY_METHODS = [
+  { value: 'pickup', label: '到店自取' },
+  { value: 'express', label: '快递配送' },
+];
+
+module.exports = {
+  ENV_ID, APP_NAME, CLINIC_LOCATION, WECOM_CS, PAYMENT_CONFIG,
+  SHOP_CATEGORIES, PRODUCT_TYPES, DELIVERY_METHODS
+};
