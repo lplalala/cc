@@ -12,7 +12,7 @@ Page({
     patients: [],
     showBookings: false,
     showPatients: false,
-    hasAuth: false       // 是否已完成授权（手机号+昵称）
+    hasAuth: false
   },
 
   onLoad() {
@@ -20,20 +20,23 @@ Page({
   },
 
   onShow() {
-    // 每次回来都刷新（auth 页授权完回来后需要更新）
-    this._refreshAll();
+    // 首次加载后仅刷新高频数据
+    if (!this._firstLoadDone) {
+      this._refreshAll();
+      this._firstLoadDone = true;
+      return;
+    }
+    // 后续 onShow 只做轻量刷新
+    this._lightRefresh();
   },
 
-  /** 统一刷新所有用户数据 */
+  /** 首次全量加载 */
   _refreshAll() {
     const loggedOut = wx.getStorageSync('loggedOut');
     if (loggedOut) {
       this.setData({
-        openid: '',
-        phone: '',
-        nickName: '',
-        hasAuth: false,
-        isAdmin: false
+        openid: '', phone: '', nickName: '', hasAuth: false, isAdmin: false,
+        bookings: [], patients: []
       });
       return;
     }
@@ -42,70 +45,74 @@ Page({
     const openid = app.globalData.openid || wx.getStorageSync('openid') || '';
     const phone = app.globalData.phone || wx.getStorageSync('userPhone') || '';
     const nickName = app.globalData.nickName || wx.getStorageSync('userNickName') || '';
+    const hasAuth = !!(openid && (phone || nickName));
 
-    // hasAuth：有 openid 且有手机号或昵称才视为已授权
+    // 合并一次 setData
+    const updateData = {
+      openid, phone, nickName, hasAuth,
+      isAdmin: app.globalData.isAdmin || false
+    };
+
+    if (!hasAuth) {
+      updateData.bookings = [];
+      updateData.patients = [];
+      this.setData(updateData);
+      return;
+    }
+
+    // 先设置基础信息，再异步加载列表
+    this.setData(updateData);
+    this.loadUserInfo();
+    Promise.all([this.loadBookings(), this.loadPatients()]);
+  },
+
+  /** 轻量刷新：只查全局状态，不重新查数据库 */
+  _lightRefresh() {
+    const app = getApp();
+    const openid = app.globalData.openid || wx.getStorageSync('openid') || '';
+    const phone = app.globalData.phone || wx.getStorageSync('userPhone') || '';
+    const nickName = app.globalData.nickName || wx.getStorageSync('userNickName') || '';
     const hasAuth = !!(openid && (phone || nickName));
 
     this.setData({
-      openid,
-      phone,
-      nickName,
-      hasAuth,
+      openid, phone, nickName, hasAuth,
       isAdmin: app.globalData.isAdmin || false
     });
 
-    // 已授权才加载后台数据
     if (hasAuth) {
-      this.loadUserInfo();
+      // 仅刷新列表，不重查 users 表（昵称/手机号变更概率低）
       Promise.all([this.loadBookings(), this.loadPatients()]);
     }
   },
 
-  // 从 users 集合加载昵称和手机号
   loadUserInfo() {
     const openid = this.data.openid;
     if (!openid) return;
     db.collection(COLLECTIONS.USERS).where({ openid }).get().then(res => {
       if (res.data.length > 0) {
         const user = res.data[0];
-        this.setData({
-          nickName: user.nickName || this.data.nickName,
-          phone: user.phone || this.data.phone,
-          hasAuth: true
-        });
-        // 同步到本地
-        if (user.phone) wx.setStorageSync('userPhone', user.phone);
-        if (user.nickName) wx.setStorageSync('userNickName', user.nickName);
+        const data = {};
+        if (user.nickName) { data.nickName = user.nickName; wx.setStorageSync('userNickName', user.nickName); }
+        if (user.phone) { data.phone = user.phone; wx.setStorageSync('userPhone', user.phone); }
+        if (Object.keys(data).length) this.setData(data);
       }
     }).catch(() => {});
   },
 
-  // 保存昵称
   onNickNameBlur(e) {
     const nickName = e.detail.value;
     if (!nickName) return;
     this.setData({ nickName });
     wx.setStorageSync('userNickName', nickName);
-    wx.cloud.callFunction({
-      name: 'updateUserInfo',
-      data: { nickName }
-    }).catch(err => console.error('更新昵称失败', err));
+    wx.cloud.callFunction({ name: 'updateUserInfo', data: { nickName } }).catch(() => {});
   },
 
-  // 复制 ID
   copyId() {
     const openid = this.data.openid;
-    if (!openid) {
-      wx.showToast({ title: 'ID 未获取', icon: 'none' });
-      return;
-    }
-    wx.setClipboardData({
-      data: openid,
-      success: () => wx.showToast({ title: '已复制 ID', icon: 'success' })
-    });
+    if (!openid) { wx.showToast({ title: 'ID 未获取', icon: 'none' }); return; }
+    wx.setClipboardData({ data: openid, success: () => wx.showToast({ title: '已复制 ID', icon: 'success' }) });
   },
 
-  // 加载预约
   loadBookings() {
     const openid = this.data.openid;
     if (!openid) return Promise.resolve();
@@ -114,7 +121,6 @@ Page({
     }).catch(() => {});
   },
 
-  // 加载就诊人
   loadPatients() {
     const openid = this.data.openid;
     if (!openid) return Promise.resolve();
@@ -135,7 +141,7 @@ Page({
           db.collection(COLLECTIONS.APPOINTMENTS).doc(id).remove().then(() => {
             wx.showToast({ title: '已删除' });
             this.loadBookings();
-          });
+          }).catch(() => wx.showToast({ title: '删除失败', icon: 'none' }));
         }
       }
     });
@@ -150,25 +156,19 @@ Page({
           db.collection(COLLECTIONS.PATIENTS).doc(id).remove().then(() => {
             wx.showToast({ title: '已删除' });
             this.loadPatients();
-          });
+          }).catch(() => wx.showToast({ title: '删除失败', icon: 'none' }));
         }
       }
     });
   },
 
-  goAddress() {
-    wx.openLocation(CLINIC_LOCATION);
-  },
+  goAddress() { wx.openLocation(CLINIC_LOCATION); },
   goMyOrders() { wx.navigateTo({ url: '/pages/shop/orders/orders' }); },
   goAdmin() { wx.navigateTo({ url: '/pages/admin/admin' }); },
-
-  goLogin() {
-    wx.navigateTo({ url: '/pages/auth/auth' });
-  },
+  goLogin() { wx.navigateTo({ url: '/pages/auth/auth' }); },
 
   logout() {
-    const keysToRemove = ['openid', 'userPhone', 'userNickName', 'userInfo', 'sessionKey', 'userAvatarUrl'];
-    keysToRemove.forEach(key => {
+    ['openid', 'userPhone', 'userNickName', 'userInfo', 'sessionKey', 'userAvatarUrl'].forEach(key => {
       try { wx.removeStorageSync(key); } catch (e) {}
     });
     wx.setStorageSync('loggedOut', true);
@@ -182,7 +182,7 @@ Page({
 
     this.setData({
       openid: '', phone: '', nickName: '', hasAuth: false, isAdmin: false,
-      bookings: [], patients: []
+      bookings: [], patients: [], showBookings: false, showPatients: false
     });
   }
 });

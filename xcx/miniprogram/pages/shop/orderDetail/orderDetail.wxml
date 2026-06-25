@@ -1,9 +1,9 @@
-<!-- 订单详情页 v2.0 — 支持配送/升级信息展示 -->
+<!-- 订单详情页 v2.0 — 支持配送/升级信息展示 + 删除订单 -->
 <view class="container" wx:if="{{order}}">
   <!-- 状态横幅 -->
   <view class="status-banner {{order.status}}">
     <text class="status-text">
-      {{order.status === 'paid' ? '待核销' : (order.status === 'verified' ? '已核销' : (order.status === 'refunding' ? '退款中' : '已退款'))}}
+      {{order.status === 'pending_payment' ? '待支付' : (order.status === 'paid' ? '待核销' : (order.status === 'verified' ? '已核销' : (order.status === 'refunding' ? '退款中' : '已退款')))}}
     </text>
     <text wx:if="{{order.status === 'refunding'}}" class="status-sub">退款处理中，预计1-3个工作日到账</text>
     <!-- 升级订单标记 -->
@@ -82,6 +82,18 @@
 
   <!-- 退款按钮 -->
   <button wx:if="{{order.status === 'paid'}}" class="refund-btn" bindtap="requestRefund">申请退款</button>
+  <!-- 继续支付按钮 -->
+  <button wx:if="{{order.status === 'pending_payment'}}" class="pay-now-btn" bindtap="retryPayment">继续支付</button>
+
+  <!-- 删除订单按钮（待支付/已核销/已退款可删除） -->
+  <view wx:if="{{order.status === 'pending_payment' || order.status === 'verified' || order.status === 'refunded'}}"
+        class="delete-section">
+    <text class="delete-divider">— — —</text>
+    <button class="delete-btn" bindtap="deleteOrder" disabled="{{deleting}}">删除订单</button>
+  </view>
+
+  <!-- 底部安全区 -->
+  <view style="height: 40rpx;"></view>
 </view>
 
 <view wx:else class="empty">加载中...</view>

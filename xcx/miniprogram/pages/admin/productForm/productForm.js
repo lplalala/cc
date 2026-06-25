@@ -11,6 +11,7 @@ Page({
     originalPrice: '',
     category: '',
     categoryId: 'oral_care',
+    categoryIndex: 0,
     tags: '',
     stock: '999',
     status: 'on',
@@ -30,6 +31,8 @@ Page({
     if (options.id) {
       this.setData({ editId: options.id });
       this.loadProduct(options.id);
+    } else {
+      this.setData({ categoryIndex: 0 });
     }
   },
 
@@ -50,6 +53,7 @@ Page({
   loadProduct(id) {
     db.collection(COLLECTIONS.PRODUCTS).doc(id).get().then(res => {
       const p = res.data;
+      const categoryIdx = this.data.categories.findIndex(c => c.id === p.categoryId);
       this.setData({
         name: p.name || '',
         description: p.description || '',
@@ -57,6 +61,7 @@ Page({
         originalPrice: String(p.originalPrice || ''),
         category: p.category || '',
         categoryId: p.categoryId || 'oral_care',
+        categoryIndex: categoryIdx >= 0 ? categoryIdx : 0,
         tags: (p.tags || []).join(','),
         stock: String(p.stock || '999'),
         status: p.status || 'on',
@@ -75,7 +80,11 @@ Page({
   // ========== 基础输入 ==========
   onCategoryChange(e) {
     const idx = parseInt(e.detail.value);
-    this.setData({ categoryId: this.data.categories[idx].id, category: this.data.categories[idx].name });
+    this.setData({
+      categoryId: this.data.categories[idx].id,
+      category: this.data.categories[idx].name,
+      categoryIndex: idx
+    });
   },
   onInput(e) {
     const field = e.currentTarget.dataset.field;
@@ -216,6 +225,9 @@ Page({
       return;
     }
 
+    // 调试：打印 editId，确认编辑模式
+    console.log('[productForm.save] editId:', editId, '集合名:', COLLECTIONS.PRODUCTS);
+
     // 清理升级推荐
     const cleanUpgrades = upgradeOptions.map(u => ({
       name: u.name || '',
@@ -223,7 +235,7 @@ Page({
       priceDiff: parseFloat(u.priceDiff) || 0,
       productId: u.productId || '',
       improvements: (u.improvements || [])
-        .filter(imp => imp.label.trim())
+        .filter(imp => imp.label && imp.label.trim())
         .map(imp => ({ label: imp.label.trim(), value: imp.value.trim() }))
     })).filter(u => u.name);
 
@@ -244,16 +256,37 @@ Page({
 
     if (!editId) data.createdAt = new Date();
 
-    const method = editId
-      ? db.collection(COLLECTIONS.PRODUCTS).doc(editId).update({ data })
-      : db.collection(COLLECTIONS.PRODUCTS).add({ data });
+    console.log('[productForm.save] 即将写入的数据:', JSON.stringify(data, null, 2));
 
-    method.then(() => {
-      wx.showToast({ title: '保存成功', icon: 'success' });
-      wx.navigateBack();
-    }).catch(err => {
-      console.error('保存失败', err);
-      wx.showToast({ title: '保存失败', icon: 'none' });
-    });
+    if (editId) {
+      // 编辑模式：先查询确认文档存在再更新
+      db.collection(COLLECTIONS.PRODUCTS).doc(editId).get().then(res => {
+        console.log('[productForm.save] 文档存在，当前数据:', res.data);
+        return db.collection(COLLECTIONS.PRODUCTS).doc(editId).update({ data });
+      }).then(updateRes => {
+        console.log('[productForm.save] update 返回:', JSON.stringify(updateRes));
+        console.log('[productForm.save] stats.updated:', updateRes.stats && updateRes.stats.updated);
+        console.log('[productForm.save] 当前用户 openid:', getApp().globalData.openid);
+        // 再次读取验证是否真的写入
+        return db.collection(COLLECTIONS.PRODUCTS).doc(editId).get();
+      }).then(verifyRes => {
+        console.log('[productForm.save] 验证写入结果 — name:', verifyRes.data.name, 'category:', verifyRes.data.category, 'categoryId:', verifyRes.data.categoryId);
+        wx.showToast({ title: '保存成功', icon: 'success' });
+        wx.navigateBack();
+      }).catch(err => {
+        console.error('[productForm.save] 保存失败:', err);
+        wx.showToast({ title: '保存失败: ' + (err.message || '未知错误'), icon: 'none' });
+      });
+    } else {
+      // 新增模式
+      db.collection(COLLECTIONS.PRODUCTS).add({ data }).then(addRes => {
+        console.log('[productForm.save] add 返回:', addRes);
+        wx.showToast({ title: '新增成功', icon: 'success' });
+        wx.navigateBack();
+      }).catch(err => {
+        console.error('[productForm.save] 新增失败:', err);
+        wx.showToast({ title: '新增失败: ' + (err.message || '未知错误'), icon: 'none' });
+      });
+    }
   }
 });

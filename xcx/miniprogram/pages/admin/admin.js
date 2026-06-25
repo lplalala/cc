@@ -335,7 +335,7 @@ Page({
       title: '核销确认',
       content: '请输入该订单的核销码',
       editable: true,
-      placeholderText: '输入8位核销码',
+      placeholderText: '输入6位核销码',
       success: res => {
         if (res.confirm && res.content) {
           wx.cloud.callFunction({

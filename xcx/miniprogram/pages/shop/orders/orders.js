@@ -4,7 +4,7 @@ const { formatDateTime } = require('../../../utils/date');
 
 Page({
   data: {
-    activeTab: 'paid',  // paid / verified / refunded
+    activeTab: 'paid',  // paid / verified / refunded / pending_payment
     orders: [],
     page: 1,
     pageSize: 10,
@@ -14,6 +14,16 @@ Page({
 
   onLoad() {
     this.loadOrders();
+  },
+
+  onShow() {
+    // 从详情页返回时刷新当前tab
+    this.loadOrders(1, this.data.activeTab);
+  },
+
+  onPullDownRefresh() {
+    this.setData({ page: 1, hasMore: true });
+    this.loadOrders(1, this.data.activeTab).then(() => wx.stopPullDownRefresh());
   },
 
   switchTab(e) {
@@ -46,13 +56,13 @@ Page({
       }).catch(() => {
         this.setData({ loading: false, orders: [] });
       });
-      return;
+      return Promise.resolve();
     }
 
     this.setData({ loading: true });
 
     const that = this;
-    db.collection(COLLECTIONS.ORDERS)
+    return db.collection(COLLECTIONS.ORDERS)
       .where({ _openid: openid, status: tab })
       .orderBy('createdAt', 'desc')
       .skip((page - 1) * that.data.pageSize)
@@ -81,5 +91,56 @@ Page({
   goDetail(e) {
     const orderId = e.currentTarget.dataset.id;
     wx.navigateTo({ url: `/pages/shop/orderDetail/orderDetail?orderId=${orderId}` });
+  },
+
+  // 继续支付（待支付订单，阻止冒泡到 goDetail）
+  continuePay(e) {
+    const order = e.currentTarget.dataset.order;
+    if (!order) return;
+    wx.navigateTo({
+      url: `/pages/shop/orderDetail/orderDetail?orderId=${order._id}`
+    });
+  },
+
+  // 删除订单
+  deleteOrder(e) {
+    const order = e.currentTarget.dataset.order;
+    if (!order || !order._id) return;
+
+    const statusMap = {
+      pending_payment: '待支付',
+      verified: '已核销',
+      refunded: '已退款'
+    };
+    const statusText = statusMap[order.status] || order.status;
+
+    wx.showModal({
+      title: '确认删除',
+      content: `确定要删除此${statusText}订单吗？删除后无法恢复。`,
+      confirmColor: '#F44336',
+      success: res => {
+        if (!res.confirm) return;
+
+        wx.showLoading({ title: '删除中...', mask: true });
+        wx.cloud.callFunction({
+          name: 'deleteOrder',
+          data: { orderId: order._id }
+        }).then(resp => {
+          wx.hideLoading();
+          if (resp.result.success) {
+            wx.showToast({ title: '已删除', icon: 'success' });
+            // 从本地列表中移除
+            const orders = this.data.orders.filter(o => o._id !== order._id);
+            this.setData({ orders });
+          } else {
+            wx.showToast({ title: resp.result.errMsg || '删除失败', icon: 'none' });
+          }
+        }).catch(err => {
+          wx.hideLoading();
+          console.error('删除订单失败:', err);
+          wx.showToast({ title: '删除失败，请重试', icon: 'none' });
+        });
+      }
+    });
   }
 });

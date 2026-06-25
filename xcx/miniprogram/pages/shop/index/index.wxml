@@ -1,5 +1,10 @@
 <!--pages/shop/index/index.wxml-->
-<!-- 商城首页：分类导航 + 商品网格 + 升级推荐弹窗 -->
+<!-- 商城首页：搜索 + 分类导航 + 商品网格 + 升级推荐弹窗 -->
+
+<!-- 搜索框 -->
+<view class="search-bar">
+  <input class="search-input" placeholder="🔍 搜索商品名称" bindinput="onSearchInput" value="{{searchKeyword}}" confirm-type="search" />
+</view>
 
 <!-- 分类横滑导航 -->
 <scroll-view class="category-bar" scroll-x enable-flex>
@@ -11,9 +16,20 @@
   </view>
 </scroll-view>
 
+<!-- 骨架屏 -->
+<view class="skeleton-grid" wx:if="{{loading && products.length === 0}}">
+  <view class="skeleton-card" wx:for="{{4}}" wx:key="*this">
+    <view class="skeleton-img"></view>
+    <view class="skeleton-body">
+      <view class="skeleton-line w60"></view>
+      <view class="skeleton-line w40"></view>
+    </view>
+  </view>
+</view>
+
 <!-- 商品网格 -->
-<view class="product-grid">
-  <block wx:for="{{products}}" wx:key="_id">
+<view class="product-grid" wx:elif="{{filteredProducts.length > 0}}">
+  <block wx:for="{{filteredProducts}}" wx:key="_id">
     <view class="product-card" bindtap="onProductTap" data-product="{{item}}">
       <image src="{{item.imageUrl || '/images/default-goods-image.png'}}"
              mode="aspectFill" class="product-img" />
@@ -23,6 +39,8 @@
           <text class="product-price">¥{{item.price}}</text>
           <text wx:if="{{item.originalPrice}}" class="product-original">¥{{item.originalPrice}}</text>
         </view>
+        <!-- 销量 -->
+        <text class="product-sales" wx:if="{{item.salesCount != null}}">已售 {{item.salesCount}} 件</text>
         <view wx:if="{{item.tags && item.tags.length}}" class="tag-row">
           <text class="tag" wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag">{{tag}}</text>
         </view>
@@ -37,13 +55,16 @@
 
 <!-- 加载状态 -->
 <view wx:if="{{loading}}" class="loading-more">加载中...</view>
-<view wx:elif="{{!hasMore && products.length > 0}}" class="no-more">— 已显示全部商品 —</view>
-<view wx:if="{{!loading && products.length === 0}}" class="empty-shop">
+<view wx:elif="{{!hasMore && filteredProducts.length > 0}}" class="no-more">— 已显示全部商品 —</view>
+<view wx:elif="{{!loading && filteredProducts.length === 0 && !searchKeyword}}" class="empty-shop">
   <text>暂无商品</text>
+</view>
+<view wx:elif="{{!loading && filteredProducts.length === 0 && searchKeyword}}" class="empty-shop">
+  <text>未找到匹配的商品</text>
 </view>
 
 <!-- ========== 商品详情弹窗 ========== -->
-<view class="detail-mask" wx:if="{{showDetail}}" bindtap="closeDetail"></view>
+<view class="detail-mask" wx:if="{{showDetail}}" bindtap="closeDetail" catchtouchmove=""></view>
 <view class="detail-popup {{showDetail ? 'show' : ''}}">
   <view class="detail-close" bindtap="closeDetail">✕</view>
 
@@ -81,38 +102,42 @@
       </view>
     </view>
 
-    <!-- ===== 升级推荐 ===== -->
-    <view class="upgrade-section" wx:if="{{currentUpgrade}}">
+    <!-- ===== 升级推荐（多选项） ===== -->
+    <view class="upgrade-section" wx:if="{{currentUpgrades && currentUpgrades.length > 0}}">
       <view class="upgrade-divider">
         <view class="divider-line"></view>
         <text class="divider-text">✨ 升级推荐</text>
         <view class="divider-line"></view>
       </view>
 
-      <view class="upgrade-card">
-        <image wx:if="{{currentUpgrade.imageUrl}}"
-               src="{{currentUpgrade.imageUrl}}"
-               mode="aspectFill"
-               class="upgrade-img" />
+      <scroll-view class="upgrade-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+        <view class="upgrade-card" wx:for="{{currentUpgrades}}" wx:key="index" wx:for-item="ug">
+          <image wx:if="{{ug.imageUrl}}"
+                 src="{{ug.imageUrl}}"
+                 mode="aspectFill"
+                 class="upgrade-img" />
 
-        <view class="upgrade-info">
-          <text class="upgrade-name">{{currentUpgrade.name}}</text>
+          <view class="upgrade-info">
+            <text class="upgrade-name">{{ug.name}}</text>
 
-          <view wx:if="{{currentUpgrade.priceDiff > 0}}" class="upgrade-price-row">
-            <text class="upgrade-label">补差价</text>
-            <text class="upgrade-price">+¥{{currentUpgrade.priceDiff}}</text>
-          </view>
-
-          <view class="improvements" wx:if="{{currentUpgrade.improvements && currentUpgrade.improvements.length}}">
-            <view class="improve-item" wx:for="{{currentUpgrade.improvements}}" wx:key="label">
-              <text class="improve-label">{{item.label}}</text>
-              <text class="improve-value">{{item.value}}</text>
+            <view wx:if="{{ug.priceDiff > 0}}" class="upgrade-price-row">
+              <text class="upgrade-label">补差价</text>
+              <text class="upgrade-price">+¥{{ug.priceDiff}}</text>
             </view>
+
+            <view class="improvements" wx:if="{{ug.improvements && ug.improvements.length}}">
+              <view class="improve-item" wx:for="{{ug.improvements}}" wx:key="label">
+                <text class="improve-label">{{item.label}}</text>
+                <text class="improve-value">{{item.value}}</text>
+              </view>
+            </view>
+
+            <button class="upgrade-select-btn" data-upgrade="{{ug}}" bindtap="onSelectUpgrade">
+              🚀 升级此方案
+            </button>
           </view>
         </view>
-      </view>
-
-      <button class="upgrade-btn" bindtap="goUpgrade">🚀 立即升级</button>
+      </scroll-view>
     </view>
   </scroll-view>
 

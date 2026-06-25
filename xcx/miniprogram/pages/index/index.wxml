@@ -42,7 +42,7 @@
 <button wx:if="{{isAdmin}}" class="admin-entry" bindtap="goAdmin">后台管理</button>
 
 <!-- ============ 医生展开预约 Overlay ============ -->
-<view class="overlay-mask" wx:if="{{showOverlay}}" bindtap="closeOverlay"></view>
+<view class="overlay-mask" wx:if="{{showOverlay}}" bindtap="closeOverlay" catchtouchmove=""></view>
 <view class="overlay-panel {{showOverlay ? 'show' : ''}}" catchtap="stopBubble">
   <!-- 关闭按钮 -->
   <view class="overlay-close" bindtap="closeOverlay">✕</view>

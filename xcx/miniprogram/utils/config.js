@@ -34,7 +34,7 @@ const PAYMENT_CONFIG = {
 const SHOP_CATEGORIES = [
   { id: 'all', name: '全部' },
   { id: 'oral_care', name: '洁牙' },
-  { id: 'whitening', name: '美白' },
+  { id: 'whitening', name: '补牙' },
   { id: 'implant', name: '种植' },
   { id: 'restoration', name: '修复' },
   { id: 'pediatric', name: '儿童齿科' },

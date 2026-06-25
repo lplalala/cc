@@ -107,6 +107,7 @@ swiper { height: 360rpx; }
   flex-direction: column;
   transform: translateY(100%);
   transition: transform 0.3s ease;
+  will-change: transform;
 }
 .overlay-panel.show { transform: translateY(0); }
 

@@ -45,6 +45,7 @@ page { background: #F5F7FA; }
 .row { display: flex; justify-content: space-between; padding: 12rpx 0; font-size: 28rpx; color: #666; }
 .row.total { border-top: 1rpx solid #EEE; margin-top: 8rpx; padding-top: 16rpx; color: #1A1A1A; }
 .total-num { font-size: 36rpx; font-weight: 700; color: #FF7F32; }
+.upgrade-diff { font-size: 26rpx; color: #1A8CFF; font-weight: 600; }
 
 .pay-btn {
   margin-top: 20rpx;

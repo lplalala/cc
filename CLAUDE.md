@@ -4,12 +4,30 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 项目结构
 
-本仓库包含两个独立项目：
+本仓库包含以下独立项目：
 
 - **`pomodoro.html`** — 单文件番茄钟应用，无依赖，浏览器直接打开
-- **`xcx/`** — 同进仁华口腔连锁微信小程序（云开发），主要工作区。用户端+管理端集成在同一小程序内，计划后续拆分独立 Web 后台。
+- **`xcx/`** — 同进仁华口腔连锁微信小程序（云开发），主要工作区
+- **`yjb/`** — 员工月度业绩Excel表（人工录入），每月12人，每人含多sheet（初诊/复诊/洁牙/业绩/义诊等）
+- **`check_output/`** — 业绩核对输出目录，每个员工一个Excel + 汇总表
+- **`generate_check_excel.py`** — 业绩核对脚本：读取yjb Excel → 调用e看牙API → 对比输出
+- **`.claude/skills/dental-secretary/generate_performance_report.py`** — 🆕 **业绩报表生成模块**：直接从系统生成任意员工任意月份业绩表
+- **`小程序新需求`** — 业绩核对规则文档（洁牙师映射、核对逻辑、产出目标）
+- **`tools/`** — 辅助工具脚本
+- **`.claude/skills/dental-secretary/`** — 口腔秘书 Skill（e看牙 API 封装）
 
-另有财务对账相关的 Excel 文件（`交易明细_*.xls`）会临时出现在根目录。
+### 新增：口腔项目 PDF 数据处理
+
+根目录下的 `process_dental_pdf.py` 用于从手写扫描 PDF 中提取学生数据并填入 Excel 模板。工作流程：
+1. 从 PDF 提取 JPEG 图片 → 2. OCR 识别（PaddleOCR/EasyOCR）→ 3. 解析学生信息 → 4. 填充 Excel
+
+关键文件：
+- `厦岗小学—儿童口腔疾病综合干预项目登记表(学龄儿童）.pdf` — 8页扫描PDF
+- `儿童口腔项目（窝沟封闭）登记表（手工录入） - 副本.xlsx` — Excel模板
+- `*_by_PaddleOCR-VL-1.6*.md` — PaddleOCR 识别结果（HTML表格格式）
+- `process_dental_pdf.py` — 自动化脚本
+- `pdf_pages/` — 从PDF提取的JPEG页面图片
+- `extracted_students.json` — 提取的学生数据
 
 ## xcx 微信小程序
 
@@ -32,7 +50,9 @@ xcx/
     createOrder/           #  [商城] 创建订单 + API v2 统一下单（依赖 xml2js）
     handlePaymentCallback/ #  [商城] 支付回调（前端主动调用），更新订单+扣库存
     verifyCode/            #  [商城] 核销（需管理员权限）
-    refundOrder/           #  [商城] 退款（需管理员权限）
+    refundOrder/           #  [商城] 退款（需管理员权限，含API证书）
+    refundCallback/        #  [商城] 退款回调处理
+    deleteOrder/           #  [商城] 删除订单
   miniprogram/
     app.js                 # 云环境初始化 + openid获取 + 管理员判断
     app.json               # 页面路由 + TabBar（首页/商城/我的）
@@ -86,10 +106,20 @@ xcx/
 | `canvas-design` | 官方 | 图片/海报生成 |
 | `frontend-design` | 官方 | 前端界面设计 |
 | `miniprogram-development` | 系统内置 | 微信小程序开发 |
+| `dental-secretary` | 自定义 | **口腔秘书** — 连接领健e看牙API查诊所数据 |
+| `silicon-paddle-ocr` | GitHub | PaddleOCR 图片文字识别（SiliconFlow API） |
+| `paddleocr-text-recognition` | GitHub | PaddleOCR 文本识别（paddleocr.com API） |
 
 Skills 安装信息记录在 `skills-lock.json`。Skill 文件分布：
 - `.claude/skills/` — 自定义 Skill（reconciliation-helper、attendance-calculator、dental-secretary）
 - `.agents/skills/` — 官方 Skill 资源文件（xlsx、docx、pdf，通过 symlink 引用）
+- `C:\Users\LIN\.claude\skills\` — 通过 `npx skills add` 安装的 Skill（silicon-paddle-ocr、paddleocr-text-recognition）
+
+### OCR 可用工具
+
+- **easyocr**：可通过 `uv run --with easyocr python` 直接运行，模型已缓存于 `~/.EasyOCR/`，支持中英文
+- **PaddleOCR skill**：`paddleocr-text-recognition` skill 已安装，需 `PADDLEOCR_OCR_API_URL` + `PADDLEOCR_ACCESS_TOKEN` 环境变量
+- **SiliconFlow skill**：`silicon-paddle-ocr` skill 已安装，需 `SILICONFLOW_API_KEY` 环境变量
 
 ### reconciliation-helper（对账 Skill）
 
@@ -135,6 +165,69 @@ Skills 安装信息记录在 `skills-lock.json`。Skill 文件分布：
 4. **只读**：绝对不调用 PUT/DELETE 接口
 
 详见 `.claude/skills/dental-secretary/SKILL.md`。
+
+### ⚡ 员工业绩核对（yjb → e看牙）v11
+
+**核心脚本**: `generate_check_excel.py`
+
+**运行流程：**
+```bash
+# 1. 拉取 e看牙数据（1-6月全覆盖，确保所有5月payDateTime收费不遗漏）
+python -c "
+import requests, json, threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
+s = requests.Session()
+r = s.post('https://dghljd.linkedcare.cn/LogOn', data={'account':'苏里','password':'Sl159767'}, headers={'X-Requested-With':'XMLHttpRequest'})
+td = {}
+for c in s.cookies:
+    if c.name == 'AresToken': td = json.loads(c.value)
+api_host = td['api_host']; at = td['access_token']
+h = {'Authorization': f'bearer {at}', 'Content-Type': 'application/json'}
+V1 = f'{api_host}/api/v1'
+r = s.get(f'{V1}/appointments/search', headers=h, params={'officeId':40,'startTime':'2026-01-01T00:00:00','endTime':'2026-06-30T23:59:59','pageIndex':0,'pageCount':8000})
+appts = r.json()
+with open('may_appts.json','w',encoding='utf-8') as f: json.dump(appts, f, ensure_ascii=False)
+# ...并发拉取收费明细到 may_charges.json
+"
+
+# 2. 运行核对
+python generate_check_excel.py
+# 输出 → check_output/{员工名}_核对表.xlsx（多sheet + 问题汇总sheet）
+```
+
+**核心匹配逻辑（v11 最终版）：**
+
+| # | 规则 | 说明 |
+|---|------|------|
+| 1 | **纯 payDateTime 匹配** | 不看预约时间，只看收费时间。索引: `charge_by_key[(payDateTime, privateId)]` |
+| 2 | **收费单状态过滤** | 只取 `status="已收费"`，排除 未收费/已合并撤销/退费 |
+| 3 | **医生业绩过滤** | 医生/洁牙师按 `doctorName` + `consultantName` + 注释代码过滤；介绍人/开发人不过滤 |
+| 4 | **备注栏代码** | 查 `chargeOrder.comments` 字段：`ld/ql/mm/xq/lq/yl` 及 `qlh/ldh`(洁牙后) |
+| 5 | **助手后缀映射** | 动态唯一字符+硬编码（`李胜祥｜曾`=曾祁玲），歧义字符排歧 |
+| 6 | **全局搜索仅洁牙师** | 按 comments 代码全月搜索仅对洁牙师启用，医生不用（避免跨患者误匹配） |
+| 7 | **跨sheet逐项匹配** | 同(date,pid)在多sheet出现时按治疗项目名匹配，智能选单项or全部 |
+| 8 | **POS付款计入** | `count=0` 但 `actualPrice>0` 必须计入 |
+| 9 | **退费不算当月** | 退费状态自动排除，应在退款月算负业绩 |
+| 10 | **同天多笔合并** | 同一患者同一天多笔收费自动汇总，显示"N笔" |
+
+**洁牙师映射表：** 02→王秀琴, 24→陈柳青, 52→李丹, 88→毛登镕, 27→吴越乐, 68→曾祁玲
+
+**缩写映射表：** ld→李丹, ql→曾祁玲, mm→毛登镕, xq→王秀琴, lq→陈柳青, yl→吴越乐
+
+详见 `.claude/skills/dental-secretary/SKILL.md` 和 `memory/performance-check-rules.md`。
+
+### 🆕 业绩报表生成模块
+
+```bash
+# 直接从系统生成业绩表（无需yjb Excel模板）
+python .claude/skills/dental-secretary/generate_performance_report.py <员工名> <开始日期> <结束日期>
+
+# 示例
+python .claude/skills/dental-secretary/generate_performance_report.py 曾祁玲 2026-06-01 2026-06-20
+python .claude/skills/dental-secretary/generate_performance_report.py 李丹 2026-06-01 2026-06-30 check_output/李丹_6月.xlsx
+```
+
+模块内置全部11条核对规则，自动拉数据→建索引→过滤→输出Excel。
 
 ## 重要规则
 

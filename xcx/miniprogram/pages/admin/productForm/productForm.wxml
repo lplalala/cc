@@ -17,7 +17,7 @@
 
   <view class="form-item">
     <text class="label">分类</text>
-    <picker mode="selector" range="{{categories}}" range-key="name" bindchange="onCategoryChange">
+    <picker mode="selector" range="{{categories}}" range-key="name" value="{{categoryIndex}}" bindchange="onCategoryChange">
       <view class="picker-view">{{category || '请选择分类'}}</view>
     </picker>
   </view>

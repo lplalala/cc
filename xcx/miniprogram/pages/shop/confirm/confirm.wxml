@@ -34,14 +34,18 @@
       <text>商品金额</text>
       <text>¥{{totalAmount}}</text>
     </view>
+    <view wx:if="{{isUpgrade && upgradePriceDiff > 0}}" class="row">
+      <text>升级补差价</text>
+      <text class="upgrade-diff">+¥{{upgradePriceDiffDisplay}}</text>
+    </view>
     <view class="row total">
       <text>实付金额</text>
-      <text class="total-num">¥{{totalAmount}}</text>
+      <text class="total-num">¥{{finalAmount}}</text>
     </view>
   </view>
 
   <!-- 支付按钮 -->
   <button class="pay-btn btn-primary" bindtap="confirmPay" disabled="{{!product}}">
-    确认支付 ¥{{totalAmount}}
+    确认支付 ¥{{finalAmount}}
   </button>
 </view>

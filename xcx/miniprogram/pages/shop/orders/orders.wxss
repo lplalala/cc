@@ -6,12 +6,22 @@
 .tab-item.active { color: #1A8CFF; font-weight: 600; border-bottom: 4rpx solid #1A8CFF; }
 
 .order-card { padding: 20rpx; }
-.order-header { display: flex; justify-content: space-between; margin-bottom: 12rpx; }
+.order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12rpx; }
 .order-no { font-size: 24rpx; color: #888; }
+.order-header-right { display: flex; align-items: center; gap: 12rpx; }
 .order-status { font-size: 24rpx; font-weight: 600; }
+.order-status.pending_payment { color: #E6A23C; }
 .order-status.paid { color: #FF7F32; }
 .order-status.verified { color: #1A8CFF; }
 .order-status.refunded { color: #999; }
+
+/* 删除图标 */
+.delete-icon {
+  font-size: 32rpx;
+  padding: 4rpx 8rpx;
+  opacity: 0.6;
+}
+.delete-icon:active { opacity: 1; transform: scale(1.2); }
 
 .order-prod { display: flex; align-items: center; gap: 16rpx; padding: 12rpx 0; border-top: 1rpx solid #F5F5F5; }
 .prod-thumb { width: 80rpx; height: 80rpx; border-radius: 8rpx; background: #E8F4FD; flex-shrink: 0; }
@@ -21,6 +31,20 @@
 
 .order-footer { display: flex; justify-content: space-between; padding-top: 12rpx; border-top: 1rpx solid #F5F5F5; }
 .order-time { font-size: 22rpx; color: #999; }
+.order-footer-right { display: flex; align-items: center; gap: 16rpx; }
+.order-verify-code { font-size: 22rpx; color: #1A8CFF; font-weight: 600; }
 .order-total { font-size: 28rpx; font-weight: 600; }
 
 .empty, .loading { text-align: center; color: #999; padding: 80rpx 0; }
+
+.continue-pay-btn {
+  margin-top: 12rpx;
+  background: #FF7F32;
+  color: #FFFFFF;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  padding: 12rpx 0;
+  border: none;
+  line-height: 1.4;
+}
+.continue-pay-btn:active { opacity: 0.85; }

@@ -1,6 +1,58 @@
 /* ======== 商城首页 — 宝矿力清新风格 v2.0 ======== */
 page { background: #F5F7FA; }
 
+/* 搜索框 */
+.search-bar {
+  padding: 20rpx 30rpx 0;
+  background: #F5F7FA;
+}
+.search-input {
+  background: #FFFFFF;
+  border-radius: 40rpx;
+  padding: 18rpx 32rpx;
+  font-size: 26rpx;
+  color: #1A1A1A;
+  border: 2rpx solid #E8E8E8;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.03);
+}
+
+/* 骨架屏 */
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+  padding: 20rpx 30rpx;
+}
+.skeleton-card {
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+.skeleton-img {
+  width: 100%;
+  height: 340rpx;
+  background: linear-gradient(90deg, #E8E8E8 25%, #F0F0F0 50%, #E8E8E8 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+.skeleton-body {
+  padding: 20rpx;
+}
+.skeleton-line {
+  height: 24rpx;
+  border-radius: 8rpx;
+  background: linear-gradient(90deg, #E8E8E8 25%, #F0F0F0 50%, #E8E8E8 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  margin-bottom: 12rpx;
+}
+.skeleton-line.w60 { width: 60%; }
+.skeleton-line.w40 { width: 40%; }
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
 /* 分类导航 */
 .category-bar {
   white-space: nowrap;
@@ -65,6 +117,9 @@ page { background: #F5F7FA; }
 .product-price { font-size: 34rpx; font-weight: 700; color: #FF7F32; }
 .product-original { font-size: 22rpx; color: #999; text-decoration: line-through; }
 
+/* 销量 */
+.product-sales { font-size: 22rpx; color: #999; display: block; margin-bottom: 6rpx; }
+
 /* 标签 */
 .tag-row { display: flex; gap: 8rpx; flex-wrap: wrap; }
 .tag {
@@ -111,6 +166,7 @@ page { background: #F5F7FA; }
   flex-direction: column;
   transform: translateY(100%);
   transition: transform 0.3s ease;
+  will-change: transform;
 }
 .detail-popup.show { transform: translateY(0); }
 
@@ -190,14 +246,23 @@ page { background: #F5F7FA; }
   white-space: nowrap;
 }
 
+/* 升级推荐横滑容器 */
+.upgrade-scroll {
+  white-space: nowrap;
+  padding-bottom: 12rpx;
+}
+
 .upgrade-card {
+  display: inline-flex;
+  gap: 20rpx;
   background: linear-gradient(135deg, #F0F7FF 0%, #E8F4FD 100%);
   border-radius: 16rpx;
   border: 2rpx solid #C5DFF8;
   padding: 20rpx;
-  display: flex;
-  gap: 20rpx;
-  margin-bottom: 12rpx;
+  margin-right: 20rpx;
+  width: 500rpx;
+  vertical-align: top;
+  white-space: normal;
 }
 .upgrade-img {
   width: 140rpx;
@@ -229,17 +294,18 @@ page { background: #F5F7FA; }
 .improve-label { font-size: 20rpx; color: #666; }
 .improve-value { font-size: 20rpx; color: #1A8CFF; font-weight: 600; }
 
-.upgrade-btn {
+.upgrade-select-btn {
   background: linear-gradient(135deg, #1A8CFF, #0066DD);
   color: #FFFFFF;
-  border-radius: 12rpx;
-  font-size: 26rpx;
+  border-radius: 10rpx;
+  font-size: 24rpx;
   font-weight: 600;
-  padding: 14rpx 0;
+  padding: 10rpx 0;
   border: none;
   line-height: 1.4;
+  margin-top: 8rpx;
 }
-.upgrade-btn:active { opacity: 0.85; }
+.upgrade-select-btn:active { opacity: 0.85; }
 
 /* 底部购买按钮 */
 .detail-footer {
